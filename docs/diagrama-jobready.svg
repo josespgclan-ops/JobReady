@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1370" viewBox="0 0 1720 1370">
+  <defs>
+    <style>
+      .bg { fill:#f7f9fc; }
+      .title { font:700 30px Arial,sans-serif; fill:#172033; }
+      .subtitle { font:16px Arial,sans-serif; fill:#586174; }
+      .box { fill:#fff; stroke:#334155; stroke-width:2; rx:10; }
+      .head { fill:#1d4ed8; rx:9; }
+      .head2 { fill:#0f766e; rx:9; }
+      .head3 { fill:#7c3aed; rx:9; }
+      .name { font:700 17px Arial,sans-serif; fill:#fff; }
+      .field { font:14px Consolas,monospace; fill:#273244; }
+      .pk { font-weight:700; fill:#b45309; }
+      .fk { font-weight:700; fill:#1d4ed8; }
+      .rel { fill:none; stroke:#64748b; stroke-width:2; marker-end:url(#arrow); }
+      .newrel { fill:none; stroke:#7c3aed; stroke-width:3; marker-end:url(#arrowNew); }
+      .label { font:12px Arial,sans-serif; fill:#475569; }
+      .legend { font:14px Arial,sans-serif; fill:#334155; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowNew" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1720" height="1370"/>
+  <text class="title" x="40" y="42">JobReady — Diagrama Entidad–Relación</text>
+  <text class="subtitle" x="40" y="70">13 tablas · Preparación y evaluación colaborativa de entrevistas laborales</text>
+
+  <!-- Relaciones detrás de las tablas -->
+  <path class="rel" d="M300 165 H355"/><text class="label" x="305" y="155">1 : N</text>
+  <path class="rel" d="M655 195 H710"/><text class="label" x="660" y="185">1 : N</text>
+  <path class="rel" d="M1010 165 H1065"/><text class="label" x="1015" y="155">N : 1</text>
+  <path class="rel" d="M505 310 V405"/>
+  <path class="rel" d="M150 610 H355"/>
+  <path class="rel" d="M655 480 H710"/>
+  <path class="rel" d="M505 310 V370 H860 V405"/>
+  <path class="rel" d="M1010 500 H1065"/>
+  <path class="rel" d="M505 310 V350 H1215 V405"/>
+  <path class="rel" d="M860 610 V655 H1215 V735"/>
+  <path class="rel" d="M1365 610 H1420 V735 H1365"/>
+  <path class="rel" d="M655 250 H1570 V405"/>
+  <path class="newrel" d="M150 610 V735"/>
+  <path class="newrel" d="M300 835 H355"/>
+  <path class="newrel" d="M1215 610 V675 H505 V735"/>
+  <path class="newrel" d="M710 850 H655"/>
+
+  <!-- ROW 1 -->
+  <g transform="translate(40,100)">
+    <rect class="box" width="260" height="150"/><rect class="head" width="260" height="38"/>
+    <text class="name" x="14" y="25">ROLES</text>
+    <text class="field pk" x="14" y="62">PK id_rol</text><text class="field" x="14" y="86">nombre</text>
+    <text class="field" x="14" y="110">descripcion</text>
+  </g>
+  <g transform="translate(355,100)">
+    <rect class="box" width="300" height="210"/><rect class="head" width="300" height="38"/>
+    <text class="name" x="14" y="25">USUARIOS</text>
+    <text class="field pk" x="14" y="62">PK id_usuario</text><text class="field fk" x="14" y="86">FK id_rol</text>
+    <text class="field" x="14" y="110">nombre_completo · email</text><text class="field" x="14" y="134">username · password_hash</text>
+    <text class="field" x="14" y="158">telefono · nivel_actual</text><text class="field" x="14" y="182">fecha_registro · estado</text>
+  </g>
+  <g transform="translate(710,100)">
+    <rect class="box" width="300" height="190"/><rect class="head" width="300" height="38"/>
+    <text class="name" x="14" y="25">SUSCRIPCIONES</text>
+    <text class="field pk" x="14" y="62">PK id_suscripcion</text><text class="field fk" x="14" y="86">FK id_usuario</text>
+    <text class="field fk" x="14" y="110">FK id_plan</text><text class="field" x="14" y="134">fecha_inicio · fecha_fin</text>
+    <text class="field" x="14" y="158">estado</text>
+  </g>
+  <g transform="translate(1065,100)">
+    <rect class="box" width="300" height="210"/><rect class="head" width="300" height="38"/>
+    <text class="name" x="14" y="25">PLANES</text>
+    <text class="field pk" x="14" y="62">PK id_plan</text><text class="field" x="14" y="86">nombre · precio_mensual</text>
+    <text class="field" x="14" y="110">limite_sesiones</text><text class="field" x="14" y="134">permite_analisis_corporal</text>
+    <text class="field" x="14" y="158">permite_analisis_tonal</text><text class="field" x="14" y="182">permite_feedback_humano</text>
+  </g>
+
+  <!-- ROW 2 -->
+  <g transform="translate(40,405)">
+    <rect class="box" width="260" height="205"/><rect class="head" width="260" height="38"/>
+    <text class="name" x="14" y="25">CARRERAS</text>
+    <text class="field pk" x="14" y="62">PK id_carrera</text><text class="field" x="14" y="86">nombre</text>
+    <text class="field" x="14" y="110">descripcion</text><text class="field" x="14" y="134">activo</text>
+  </g>
+  <g transform="translate(355,405)">
+    <rect class="box" width="300" height="180"/><rect class="head" width="300" height="38"/>
+    <text class="name" x="14" y="25">USUARIO_CARRERAS</text>
+    <text class="field pk" x="14" y="62">PK/FK id_usuario</text><text class="field pk" x="14" y="86">PK/FK id_carrera</text>
+    <text class="field" x="14" y="110">fecha_seleccion</text>
+  </g>
+  <g transform="translate(710,405)">
+    <rect class="box" width="300" height="205"/><rect class="head" width="300" height="38"/>
+    <text class="name" x="14" y="25">SESIONES_PROGRAMADAS</text>
+    <text class="field pk" x="14" y="62">PK id_sesion</text><text class="field fk" x="14" y="86">FK id_usuario · id_carrera</text>
+    <text class="field" x="14" y="110">fecha_programada</text><text class="field" x="14" y="134">hora_programada · estado</text>
+    <text class="field" x="14" y="158">recordatorio_enviado</text>
+  </g>
+  <g transform="translate(1065,405)">
+    <rect class="box" width="300" height="205"/><rect class="head" width="300" height="38"/>
+    <text class="name" x="14" y="25">SIMULACIONES</text>
+    <text class="field pk" x="14" y="62">PK id_simulacion</text><text class="field fk" x="14" y="86">FK usuario · carrera · sesion</text>
+    <text class="field" x="14" y="110">numero_simulacion</text><text class="field" x="14" y="134">fecha_inicio · fecha_fin</text>
+    <text class="field" x="14" y="158">duracion_segundos · estado</text>
+  </g>
+
+  <!-- ROW 3: nuevas entidades y evidencias -->
+  <g transform="translate(40,735)">
+    <rect class="box" width="260" height="230"/><rect class="head3" width="260" height="38"/>
+    <text class="name" x="14" y="25">PREGUNTAS_ENTREVISTA</text>
+    <text class="field pk" x="14" y="62">PK id_pregunta</text><text class="field fk" x="14" y="86">FK id_carrera</text>
+    <text class="field" x="14" y="110">texto_pregunta</text><text class="field" x="14" y="134">categoria</text>
+    <text class="field" x="14" y="158">nivel_dificultad</text><text class="field" x="14" y="182">activo · fecha_creacion</text>
+  </g>
+  <g transform="translate(355,735)">
+    <rect class="box" width="300" height="250"/><rect class="head3" width="300" height="38"/>
+    <text class="name" x="14" y="25">RESPUESTAS_ENTREVISTA</text>
+    <text class="field pk" x="14" y="62">PK id_respuesta</text><text class="field fk" x="14" y="86">FK id_simulacion</text>
+    <text class="field fk" x="14" y="110">FK id_pregunta</text><text class="field fk" x="14" y="134">FK id_archivo</text>
+    <text class="field" x="14" y="158">texto_respuesta</text><text class="field" x="14" y="182">duracion_segundos</text>
+    <text class="field" x="14" y="206">fecha_respuesta · estado</text>
+  </g>
+  <g transform="translate(710,735)">
+    <rect class="box" width="300" height="220"/><rect class="head2" width="300" height="38"/>
+    <text class="name" x="14" y="25">ARCHIVOS_SIMULACION</text>
+    <text class="field pk" x="14" y="62">PK id_archivo</text><text class="field fk" x="14" y="86">FK id_simulacion</text>
+    <text class="field" x="14" y="110">tipo_archivo</text><text class="field" x="14" y="134">url_almacenamiento</text>
+    <text class="field" x="14" y="158">peso_mb · fecha_creacion</text>
+  </g>
+  <g transform="translate(1065,735)">
+    <rect class="box" width="300" height="250"/><rect class="head2" width="300" height="38"/>
+    <text class="name" x="14" y="25">EVALUACIONES_SIMULACION</text>
+    <text class="field pk" x="14" y="62">PK id_evaluacion</text><text class="field fk" x="14" y="86">FK id_simulacion (UNIQUE)</text>
+    <text class="field fk" x="14" y="110">FK id_especialista</text><text class="field" x="14" y="134">puntaje_general · nivel</text>
+    <text class="field" x="14" y="158">tiempo_promedio_respuesta</text><text class="field" x="14" y="182">seguridad_calificacion</text>
+    <text class="field" x="14" y="206">feedback_resumen</text>
+  </g>
+
+  <!-- ROW 4 -->
+  <g transform="translate(1420,405)">
+    <rect class="box" width="300" height="220"/><rect class="head" width="300" height="38"/>
+    <text class="name" x="14" y="25">ENCUESTAS_SATISFACCION</text>
+    <text class="field pk" x="14" y="62">PK id_encuesta</text><text class="field fk" x="14" y="86">FK id_usuario</text>
+    <text class="field" x="14" y="110">satisfaccion_general</text><text class="field" x="14" y="134">calificacion_servicio</text>
+    <text class="field" x="14" y="158">calidad_producto · comentario</text><text class="field" x="14" y="182">contacto · fecha_envio</text>
+  </g>
+
+  <g transform="translate(1065,1090)">
+    <rect x="0" y="0" width="520" height="150" fill="#fff" stroke="#cbd5e1" rx="10"/>
+    <text class="legend" x="18" y="30">Leyenda</text>
+    <text class="field pk" x="18" y="58">PK</text><text class="legend" x="65" y="58">Clave primaria</text>
+    <text class="field fk" x="18" y="84">FK</text><text class="legend" x="65" y="84">Clave foránea</text>
+    <line x1="18" y1="110" x2="58" y2="110" stroke="#7c3aed" stroke-width="3"/><text class="legend" x="65" y="115">Relaciones agregadas: Pregunta y Respuesta</text>
+    <text class="legend" x="18" y="140">Las flechas apuntan hacia la tabla dependiente.</text>
+  </g>
+</svg>
