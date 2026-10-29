@@ -28,7 +28,7 @@ jobs:
         working-directory: frontend
       - uses: actions/configure-pages@v5
       - name: Compilar Angular para GitHub Pages
-        run: npm run build -- --base-href /jobready-landing/
+        run: npm run build -- --base-href /JobReady/
         working-directory: frontend
       - name: Permitir abrir rutas de Angular directamente
         run: cp frontend/dist/JobReady/browser/index.html frontend/dist/JobReady/browser/404.html

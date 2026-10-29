@@ -32,6 +32,6 @@ Desde `backend/`, ejecuta `./mvnw spring-boot:run` en macOS/Linux o `.\mvnw.cmd 
 
 ## Publicación
 
-GitHub Actions compila y publica el frontend cuando se actualiza `main`, si el origen de GitHub Pages está configurado como **GitHub Actions**. El sitio previsto es https://josespgclan-ops.github.io/jobready-landing/. GitHub Pages solo aloja el frontend; el backend y la base de datos necesitan ejecutarse o desplegarse por separado.
+GitHub Actions compila y publica el frontend cuando se actualiza `main`, si el origen de GitHub Pages está configurado como **GitHub Actions**. El sitio previsto es https://josespgclan-ops.github.io/JobReady/. GitHub Pages solo aloja el frontend; el backend y la base de datos necesitan ejecutarse o desplegarse por separado.
 
 Los repositorios originales se conservan como respaldo. Los historiales de frontend y backend se incorporaron al historial de este repositorio unificado.
