@@ -1,0 +1,8 @@
+.edge-profile/
+preview.png
+Thumbs.db
+
+# Angular
+/node_modules/
+/.angular/
+/dist/

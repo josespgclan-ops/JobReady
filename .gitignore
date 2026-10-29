@@ -1,8 +1,16 @@
-.edge-profile/
-preview.png
-Thumbs.db
+# Entornos, credenciales y configuraciones locales
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+backend/src/main/resources/application.properties
 
-# Angular
-/node_modules/
-/.angular/
-/dist/
+# Archivos generados
+frontend/node_modules/
+frontend/.angular/
+frontend/dist/
+backend/target/
+.idea/
+.vscode/
+*.iml

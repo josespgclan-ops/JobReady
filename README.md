@@ -1,48 +1,37 @@
-# JobReady Frontend
+# JobReady
 
-Aplicación Angular organizada siguiendo el ejemplo del docente. El backend Spring Boot está en la carpeta principal del proyecto y tiene un repositorio Git separado.
+Aplicación para la preparación de entrevistas profesionales. Este repositorio reúne el backend Spring Boot y el frontend Angular.
 
-## Ejecutar en WebStorm
+```text
+JobReady/
+  backend/                 API en Java y Spring Boot, scripts de base de datos y documentación
+  frontend/                Aplicación Angular y su documentación
+  .github/workflows/       Publicación del frontend en GitHub Pages
+```
 
-Abre `frontend` en WebStorm y ejecuta en su terminal:
+## Para trabajar en equipo
+
+Clona este repositorio una vez. Abre `backend/` en IntelliJ IDEA y `frontend/` en WebStorm, o usa el editor que prefieras. Ambos directorios pertenecen al mismo repositorio Git: realiza los cambios desde la raíz y coordina con tu equipo el uso de ramas y revisiones.
+
+### Frontend
+
+Necesitas Node.js 24 y npm. En la terminal, desde `frontend/`:
 
 ```powershell
 npm ci
 npm start
 ```
 
-Abre `http://localhost:4200/`. Para comprobar la compilación de producción, ejecuta `npm run build`. El proyecto se verificó con Node.js 24 y npm 11.
+Abre `http://localhost:4200/`. Encontrarás la estructura y más detalles en [frontend/README.md](frontend/README.md).
 
-## Estructura
+### Backend
 
-```text
-frontend/
-  angular.json                    Configuración de Angular
-  package.json                    Dependencias y comandos
-  public/                         Recursos públicos
-  src/
-    index.html                    Documento de entrada
-    main.ts                       Inicio de Angular
-    styles.css                    Estilos globales de la landing
-    app/
-      app.ts, app.html, app.css   Componente raíz
-      app.config.ts               Configuración de la aplicación
-      app.routes.ts               Rutas y componentes
-      componentes/
-        home-componente/          Landing page: archivos TS, HTML y CSS
-      servicios/                  Futuros servicios de Angular
-```
+Necesitas Java 21, Maven o el Maven Wrapper y una base de datos PostgreSQL accesible. Usa [application-example.properties](backend/src/main/resources/application-example.properties) como referencia para configurar la conexión y las variables `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET` y `FRONTEND_URL` en tu entorno local. No publiques contraseñas ni el archivo local `application.properties`.
 
-El documento `src/index.html` contiene `<app-root>`, donde Angular monta el componente raíz. `app.html` contiene `<router-outlet>`, que muestra la pantalla elegida por el router. En `app.routes.ts`, `/` y `/home` muestran `HomeComponente`: la landing se edita en `home-componente.html` y su comportamiento en `home-componente.ts`.
+Desde `backend/`, ejecuta `./mvnw spring-boot:run` en macOS/Linux o `.\mvnw.cmd spring-boot:run` en PowerShell. El frontend Angular todavía no está conectado a la API. Para futuras llamadas desde `http://localhost:4200`, configura `FRONTEND_URL` con ese origen; para el sitio publicado usa el origen HTTPS correspondiente.
 
-Como en el ejemplo del docente, los nombres de carpetas y archivos usan minúsculas y guiones con el sufijo `-componente`; las clases usan PascalCase, por ejemplo `HomeComponente`. Los futuros servicios seguirán el patrón `servicios/nombre-servicio.ts`. Los componentes pueden representar pantallas completas o partes reutilizables.
+## Publicación
 
-## Estado de la migración
+GitHub Actions compila y publica el frontend cuando se actualiza `main`, si el origen de GitHub Pages está configurado como **GitHub Actions**. El sitio previsto es https://josespgclan-ops.github.io/jobready-landing/. GitHub Pages solo aloja el frontend; el backend y la base de datos necesitan ejecutarse o desplegarse por separado.
 
-La landing se adaptó a Angular. El ingreso y el registro aún no están implementados ni conectados al backend. Los archivos originales `index.html`, `styles.css` y `script.js` permanecen en la raíz. La pantalla estática de administración todavía no forma parte de Angular.
-
-## Publicación en GitHub Pages
-
-El flujo `.github/workflows/pages.yml` compila Angular con la base `/jobready-landing/` y publica el resultado cuando se actualiza `main`. El origen de Pages debe ser **GitHub Actions** en Settings → Pages. El enlace previsto es https://josespgclan-ops.github.io/jobready-landing/.
-
-Para comprobar la compilación destinada a Pages ejecuta `npm run build -- --base-href /jobready-landing/`. Las rutas abiertas directamente usan una página 404 de respaldo: GitHub Pages puede responder con estado HTTP 404 aunque Angular muestre la pantalla.
+Los repositorios originales se conservan como respaldo. Los historiales de frontend y backend se incorporaron al historial de este repositorio unificado.
