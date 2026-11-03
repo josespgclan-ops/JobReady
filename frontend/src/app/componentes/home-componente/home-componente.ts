@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home-componente',
+  imports: [RouterLink],
   templateUrl: './home-componente.html',
   styleUrl: './home-componente.css',
 })

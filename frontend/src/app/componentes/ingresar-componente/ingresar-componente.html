@@ -1,0 +1,18 @@
+<main class="auth-page">
+  <section class="auth-card">
+    <a class="brand" routerLink="/"><span class="brand-mark">JR</span><span>Job<span>Ready</span></span></a>
+    <p class="eyebrow">QU? BUENO TENERTE DE VUELTA</p>
+    <h1>Inicia sesi?n</h1>
+    <p class="intro">Ingresa para continuar tu preparaci?n.</p>
+    <form (ngSubmit)="ingresar()">
+      <label for="username">Usuario</label>
+      <input id="username" name="username" [(ngModel)]="username" autocomplete="username" required>
+      <label for="password">Contrase?a</label>
+      <input id="password" name="password" type="password" [(ngModel)]="password" autocomplete="current-password" required>
+      @if (error) { <p class="error" role="alert">{{ error }}</p> }
+      <button class="primary-button" type="submit" [disabled]="cargando">{{ cargando ? 'Ingresando?' : 'Ingresar' }}</button>
+    </form>
+    <p class="footnote">?A?n no tienes cuenta? <a routerLink="/registro">Reg?strate</a></p>
+    <a class="back-link" routerLink="/">Volver a la p?gina principal</a>
+  </section>
+</main>

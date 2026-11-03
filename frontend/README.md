@@ -39,7 +39,7 @@ Como en el ejemplo del docente, los nombres de carpetas y archivos usan minúscu
 
 ## Estado de la migración
 
-La landing se adaptó a Angular. El ingreso y el registro aún no están implementados ni conectados al backend. Los archivos originales `index.html`, `styles.css` y `script.js` permanecen en la raíz. La pantalla estática de administración todavía no forma parte de Angular.
+La landing se adaptó a Angular. Ingreso y registro usan los endpoints públicos del backend. La pantalla de preguntas muestra ejemplos si no hay sesión; después de ingresar consulta el banco y permite filtrar por carrera. Los archivos originales `index.html`, `styles.css` y `script.js` permanecen en la raíz. La pantalla estática de administración todavía no forma parte de Angular.
 
 ## Publicación en GitHub Pages
 

@@ -1,0 +1,25 @@
+<main class="auth-page">
+  <section class="auth-card">
+    <a class="brand" routerLink="/"><span class="brand-mark">JR</span><span>Job<span>Ready</span></span></a>
+    <p class="eyebrow">EMPIEZA A PREPARARTE</p>
+    <h1>Crea tu cuenta</h1>
+    <p class="intro">Reg?strate para guardar tu progreso de pr?ctica.</p>
+    <form (ngSubmit)="registrar()">
+      <label for="full-name">Nombre completo</label>
+      <input id="full-name" name="nombreCompleto" [(ngModel)]="nombreCompleto" autocomplete="name" required>
+      <label for="email">Correo electr?nico</label>
+      <input id="email" name="email" type="email" [(ngModel)]="email" autocomplete="email" required>
+      <label for="new-username">Usuario</label>
+      <input id="new-username" name="username" [(ngModel)]="username" autocomplete="username" required>
+      <label for="phone">Tel?fono</label>
+      <input id="phone" name="telefono" type="tel" [(ngModel)]="telefono" autocomplete="tel" required>
+      <label for="new-password">Contrase?a</label>
+      <input id="new-password" name="password" type="password" [(ngModel)]="password" autocomplete="new-password" minlength="8" required>
+      @if (error) { <p class="error" role="alert">{{ error }}</p> }
+      @if (mensaje) { <p class="success" role="status">{{ mensaje }}</p> }
+      <button class="primary-button" type="submit" [disabled]="cargando">{{ cargando ? 'Creando cuenta?' : 'Crear cuenta' }}</button>
+    </form>
+    <p class="footnote">?Ya tienes cuenta? <a routerLink="/ingresar">Inicia sesi?n</a></p>
+    <a class="back-link" routerLink="/">Volver a la p?gina principal</a>
+  </section>
+</main>

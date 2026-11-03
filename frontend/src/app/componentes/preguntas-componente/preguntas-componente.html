@@ -1,0 +1,53 @@
+<main class="questions-page">
+  <header class="questions-header">
+    <a class="brand" routerLink="/" aria-label="Volver a JobReady">
+      <span class="brand-mark">JR</span>
+      <span>Job<span>Ready</span></span>
+    </a>
+    <a class="back-link" routerLink="/">Volver al inicio</a>
+  </header>
+
+  <section class="questions-content" aria-labelledby="questions-title">
+    <p class="eyebrow">TU PR?XIMO PASO</p>
+    <h1 id="questions-title">Banco de preguntas</h1>
+    <p class="intro">
+      Explora preguntas de pr?ctica para preparar tus respuestas antes de una entrevista.
+    </p>
+
+    @if (!tieneSesion) {
+    <div class="preview-note" role="note">
+      <span aria-hidden="true">?</span>
+      <p>Vista de avance: inicia sesi?n para cargar preguntas del backend. Mientras tanto, aqu? ves ejemplos de la interfaz.</p>
+    </div>
+    <a class="home-button" routerLink="/ingresar">Iniciar sesi?n</a>
+    }
+
+    @if (cargando) { <p role="status">Cargando preguntas?</p> }
+    @if (mensaje) { <p class="preview-note" role="status">{{ mensaje }}</p> }
+
+    @if (tieneSesion && carreras.length) {
+      <label class="career-filter" for="career-filter">Filtrar por carrera</label>
+      <select id="career-filter" [(ngModel)]="carreraSeleccionada" (change)="filtrarPorCarrera()">
+        <option value="">Todas las preguntas</option>
+        @for (carrera of carreras; track carrera.idCarrera) {
+          <option [value]="carrera.idCarrera">{{ carrera.nombre }}</option>
+        }
+      </select>
+    }
+
+    <div class="question-list">
+      @for (pregunta of preguntas; track pregunta.texto) {
+        <article class="question-card">
+          <div class="question-tags">
+            <span class="tag">{{ pregunta.categoria }}</span>
+            <span class="difficulty">{{ pregunta.dificultad }}</span>
+          </div>
+          <h2>{{ pregunta.texto }}</h2>
+          <p>Piensa en un ejemplo concreto y explica qu? hiciste y cu?l fue el resultado.</p>
+        </article>
+      }
+    </div>
+
+    <a class="home-button" routerLink="/">Regresar a JobReady</a>
+  </section>
+</main>

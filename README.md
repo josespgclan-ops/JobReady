@@ -22,13 +22,13 @@ npm ci
 npm start
 ```
 
-Abre `http://localhost:4200/`. Encontrarás la estructura y más detalles en [frontend/README.md](frontend/README.md).
+Abre `http://localhost:4200/`. La landing lleva al banco de preguntas; también están las pantallas de ingreso y registro. Los servicios Angular usan `/api`; el proxy local reenvía esas solicitudes a `http://localhost:8080` para desarrollar sin CORS en el navegador. Encontrarás más detalles en [frontend/README.md](frontend/README.md).
 
 ### Backend
 
 Necesitas Java 21, Maven o el Maven Wrapper y una base de datos PostgreSQL accesible. Usa [application-example.properties](backend/src/main/resources/application-example.properties) como referencia para configurar la conexión y las variables `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET` y `FRONTEND_URL` en tu entorno local. No publiques contraseñas ni el archivo local `application.properties`.
 
-Desde `backend/`, ejecuta `./mvnw spring-boot:run` en macOS/Linux o `.\mvnw.cmd spring-boot:run` en PowerShell. El frontend Angular todavía no está conectado a la API. Para futuras llamadas desde `http://localhost:4200`, configura `FRONTEND_URL` con ese origen; para el sitio publicado usa el origen HTTPS correspondiente.
+Desde `backend/`, ejecuta `./mvnw spring-boot:run` en macOS/Linux o `.\mvnw.cmd spring-boot:run` en PowerShell. El frontend llama a los endpoints de autenticación y preguntas. En desarrollo, el proxy evita una llamada directa entre orígenes. En producción, cuando se despliegue la API en HTTPS, configura `FRONTEND_URL` con el origen de GitHub Pages y actualiza la URL base de la API en Angular.
 
 ## Publicación
 
