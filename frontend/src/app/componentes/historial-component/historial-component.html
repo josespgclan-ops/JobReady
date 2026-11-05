@@ -1,1 +1,86 @@
-<p>historial-component works!</p>
+<!-- BARRA SUPERIOR -->
+<header class="topbar">
+  <div class="topbar-logo">
+    <a routerLink="/home" class="logo">
+      <span class="logo-job">Job</span><span class="logo-ready">Ready</span>
+    </a>
+  </div>
+  <div class="topbar-actions">
+    <button type="button" class="icon-btn" aria-label="Notificaciones"><i class="fa-regular fa-bell"></i></button>
+    <div class="user-profile">
+      <i class="fa-regular fa-circle-user profile-icon"></i>
+      <span class="username">User</span>
+      <i class="fa-solid fa-chevron-down chevron-icon"></i>
+    </div>
+  </div>
+</header>
+
+<div class="main-layout">
+  <!-- BARRA LATERAL (SIDEBAR) -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <a routerLink="/preguntas" routerLinkActive="active-link" class="sidebar-link">
+        <i class="fa-regular fa-clock icon"></i>
+        <span>Iniciar Prueba</span>
+      </a>
+      <a routerLink="/historial" routerLinkActive="active-link" class="sidebar-link">
+        <i class="fa-solid fa-arrow-trend-up icon"></i>
+        <span>Historial</span>
+      </a>
+      <a href="#" class="sidebar-link">
+        <i class="fa-solid fa-scale-balanced icon"></i>
+        <span>Comparaciones</span>
+      </a>
+      <a href="#" class="sidebar-link">
+        <i class="fa-solid fa-chart-simple icon"></i>
+        <span>Resultados</span>
+      </a>
+      <a href="#" class="sidebar-link">
+        <i class="fa-regular fa-calendar-days icon"></i>
+        <span>Organizar sesión</span>
+      </a>
+      <a href="#" class="sidebar-link">
+        <i class="fa-solid fa-cube icon"></i>
+        <span>Carreras</span>
+      </a>
+      <a routerLink="/home" class="sidebar-link">
+        <i class="fa-solid fa-house icon"></i>
+        <span>Inicio</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- ÁREA PRINCIPAL -->
+  <main class="content-area">
+    <h1 class="page-title">Historial de prácticas</h1>
+
+    <!-- TABLA DE HISTORIAL -->
+    <section class="history-table-card">
+      <!-- Encabezados de la tabla -->
+      <div class="history-table-header">
+        <span class="col-sim">N° Simulación</span>
+        <span class="col-nota">Nota</span>
+        <span class="col-icon">Grabación</span>
+        <span class="col-icon">Informe</span>
+      </div>
+
+      <!-- Filas de simulaciones -->
+      <div class="history-table-body">
+        @for (simulacion of simulaciones; track simulacion.numero) {
+          <div class="history-row">
+            <span class="col-sim">Simulación {{ simulacion.numero }}</span>
+            <span class="col-nota">{{ simulacion.nota }}</span>
+            <a href="#" class="col-icon action-download" aria-label="Descargar grabación"><i class="fa-solid fa-download"></i></a>
+            <a href="#" class="col-icon action-download" aria-label="Descargar informe"><i class="fa-solid fa-download"></i></a>
+          </div>
+        }
+
+        @for (vacia of filasVacias; track $index) {
+          <div class="history-row empty-row">
+            <span>Vacío</span>
+          </div>
+        }
+      </div>
+    </section>
+  </main>
+</div>
