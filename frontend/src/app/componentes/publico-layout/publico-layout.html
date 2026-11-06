@@ -1,0 +1,24 @@
+<div class="public-shell">
+  <header class="public-header">
+    <div class="header-top">
+      <a routerLink="/" class="logo" aria-label="JobReady, inicio"><span>Job</span><strong>Ready</strong></a>
+      <div class="account-links"><a routerLink="/ingresar">Iniciar sesión</a><a class="register-link" routerLink="/registro">Registrarse</a></div>
+    </div>
+    <nav class="public-nav" aria-label="Navegación principal">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">INICIO</a>
+      <a routerLink="/nosotros" routerLinkActive="active">¿Quiénes somos?</a>
+      <a routerLink="/planes" routerLinkActive="active">Planes</a>
+      <a routerLink="/preguntas" routerLinkActive="active">Preguntas de práctica</a>
+      <a routerLink="/novedades" routerLinkActive="active">Novedades</a>
+      <a routerLink="/contacto" routerLinkActive="active">Contacto</a>
+    </nav>
+  </header>
+  <main class="public-main">
+    <h1>{{ titulo }}</h1>
+    <ng-content></ng-content>
+  </main>
+  <footer class="public-footer">
+    <div><strong>Job<span>Ready</span></strong><p>Preparación para entrevistas profesionales.</p></div>
+    <div><a routerLink="/nosotros">Nosotros</a><a routerLink="/planes">Planes</a><a routerLink="/contacto">Contacto</a></div>
+  </footer>
+</div>

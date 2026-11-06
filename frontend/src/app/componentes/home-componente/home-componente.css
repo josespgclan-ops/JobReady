@@ -1,1 +1,44 @@
-/* Estilos globales de la landing en src/styles.css. */
+:host{display:block;overflow:hidden;min-height:100vh;background:#dbe0e2;--ink:#111923;--muted:#425263;--blue:#2b77f2;--blue-2:#5bb3df;--aqua:#5bb3df;--paper:#dbe0e2;--line:#bac8d3;--shadow:0 20px 48px rgba(15,39,68,.14)}
+:host .site-header{background:rgba(219,224,226,.95)}
+:host .nav{height:92px;gap:16px}
+:host .brand{font:800 29px/1 Arial,sans-serif;letter-spacing:-1.2px}
+:host .brand-mark{background:#2b77f2}
+:host .nav-links{gap:5px;flex-wrap:wrap;justify-content:center}
+:host .nav-links a{display:inline-flex;align-items:center;min-height:34px;padding:8px 11px;border-radius:999px;background:#111;color:#fff!important;font:700 11px/1.2 Arial,sans-serif;text-decoration:none;white-space:nowrap}
+:host .nav-links a:hover,:host .nav-links a:focus-visible{background:#2b77f2;color:#fff!important}
+:host .button-small{background:#2b77f2;color:#fff;border-radius:999px}
+:host .hero{min-height:630px;gap:42px;padding-block:64px 76px}
+:host .hero h1{font:800 clamp(48px,5vw,69px)/1.04 Arial,sans-serif;letter-spacing:-.055em;margin:22px 0}
+:host .hero h1 em{color:#2b77f2}
+:host .button{border-radius:999px}
+:host .button-primary{background:#2b77f2}
+:host .button-primary:hover{background:#175ed7}
+:host .trust-row{font-size:13px;color:#344455;font-weight:600}
+:host .trust-icon{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:50%;color:#fff;background:#2b77f2;font-weight:800}
+:host .visual-halo{background:linear-gradient(145deg,#b9d9f3,#d2ebf8)}
+:host .person-frame{background:linear-gradient(145deg,#0f2e52,#2b77f2 58%,#5bb3df)}
+:host .card-controls span{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#edf2f8;color:#536379;font-size:15px}
+:host .card-controls .end{background:#2b77f2;color:#fff}
+:host .score-ring{background:#d7e9fb;color:#175ed7;font-size:24px}
+:host .score-ring:before{display:none}
+:host .feedback-card>span{background:#d7e9fb;color:#2b77f2}
+:host .proof{padding:27px;border:1px solid #a9c5d8;background:#aed9f7;border-radius:18px;box-shadow:0 12px 26px rgba(28,79,117,.1)}
+:host .proof strong{color:#0f3357}
+:host .section{padding-block:86px}
+:host .step-card{background:#f7fbfe;border-color:#bbcedb}
+:host .step-card.featured{background:linear-gradient(145deg,#123767,#1e67bf);box-shadow:0 17px 40px rgba(20,73,130,.22)}
+:host .featured .icon-box{background:#5bb3df;color:#092c55}
+:host .benefits-wrap{background:#132d4c}
+:host .benefits-copy li>span{background:#5bb3df;color:#082f5f}
+:host .quote-panel{background:rgba(91,179,223,.18)}
+:host .quote-panel h3{font-size:27px;margin:8px 0 16px}
+:host .quote-panel p{font-size:17px;line-height:1.7;color:#e2edf6;margin:0 0 26px}
+:host .hired-badge{background:#aed9f7;color:#0a3a66}
+:host .price-card{border-color:#bfd1de;background:#f8fbfe}
+:host .price-card.popular{background:linear-gradient(145deg,#174674,#2474c4)}
+:host .popular-label{background:#5bb3df}
+:host .cta{background:linear-gradient(115deg,#1d5fcb,#2b77f2 60%,#5bb3df);border-radius:22px}
+:host footer{background:#0a1d32}
+@media(max-width:1100px){:host .nav{height:auto;min-height:80px;flex-wrap:wrap;padding-block:16px}:host .nav-links{order:3;width:100%;justify-content:flex-start}:host .hero{min-height:0}}
+@media(max-width:900px){:host .nav-links{display:none}:host .nav-links.open{display:flex;position:absolute;top:75px;left:20px;right:20px;width:auto;align-items:stretch;padding:16px;background:#dbe0e2}:host .nav-links.open a{justify-content:center}:host .nav-actions{margin-left:auto}:host .hero{padding-top:55px;gap:20px}}
+@media(max-width:600px){:host .nav{min-height:70px}:host .hero{padding-block:52px 64px}:host .hero h1{font-size:44px}:host .hero-visual{min-height:430px}:host .proof{padding:22px 12px}:host .section{padding-block:72px}:host .quote-panel{padding:28px}:host .hired-badge{right:10px}}

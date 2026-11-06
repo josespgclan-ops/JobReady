@@ -1,0 +1,21 @@
+<div class="candidate-app">
+  <header class="topbar">
+    <a routerLink="/panel" class="logo" aria-label="JobReady, panel principal"><span class="logo-job">Job</span><span class="logo-ready">Ready</span></a>
+    <div class="topbar-actions"><span class="profile-label">Mi espacio</span><button type="button" class="logout" (click)="cerrarSesion()">Cerrar sesión</button></div>
+  </header>
+  <div class="main-layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" aria-label="Menú del candidato">
+        <a routerLink="/panel" class="sidebar-link" [class.active-link]="active === 'panel'"><span aria-hidden="true">⌂</span> Inicio</a>
+        <a routerLink="/entrevista" class="sidebar-link" [class.active-link]="active === 'entrevista'"><span aria-hidden="true">●</span> Iniciar prueba</a>
+        <a routerLink="/historial" class="sidebar-link" [class.active-link]="active === 'historial'"><span aria-hidden="true">↗</span> Historial</a>
+        <a routerLink="/comparaciones" class="sidebar-link" [class.active-link]="active === 'comparaciones'"><span aria-hidden="true">⇄</span> Comparaciones</a>
+        <a routerLink="/resultados" class="sidebar-link" [class.active-link]="active === 'resultados'"><span aria-hidden="true">▥</span> Resultados</a>
+        <a routerLink="/organizar" class="sidebar-link" [class.active-link]="active === 'organizar'"><span aria-hidden="true">▦</span> Organizar sesión</a>
+        <a routerLink="/carreras" class="sidebar-link" [class.active-link]="active === 'carreras'"><span aria-hidden="true">▣</span> Carreras</a>
+        <a routerLink="/satisfaccion" class="sidebar-link" [class.active-link]="active === 'satisfaccion'"><span aria-hidden="true">☆</span> Opinión</a>
+      </nav>
+    </aside>
+    <main class="content-area"><ng-content /></main>
+  </div>
+</div>

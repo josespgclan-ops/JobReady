@@ -1,0 +1,16 @@
+<div class="panel-shell">
+  <header class="topbar">
+    <a routerLink="/" class="logo" aria-label="JobReady, inicio"><span>Job</span><strong>Ready</strong></a>
+    <div class="topbar-actions"><span class="role-tag">{{ rol }}</span><button type="button" (click)="cerrarSesion()">Cerrar sesión</button></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Navegación del panel">
+      <nav>
+        <a routerLink="/preguntas">Banco de preguntas</a>
+        <a routerLink="/planes">Planes</a>
+        <a routerLink="/">Inicio público</a>
+      </nav>
+    </aside>
+    <main class="content"><ng-content></ng-content></main>
+  </div>
+</div>

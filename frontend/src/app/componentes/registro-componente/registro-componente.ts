@@ -33,12 +33,12 @@ export class RegistroComponente {
       telefono: this.telefono,
     }).subscribe({
       next: () => {
-        this.mensaje = 'Cuenta creada. Ahora puedes iniciar sesi?n.';
+        this.mensaje = 'Cuenta creada. Ahora puedes iniciar sesión.';
         this.cargando = false;
         void this.router.navigateByUrl('/ingresar');
       },
       error: () => {
-        this.error = 'No se pudo crear la cuenta. Comprueba los datos y que el backend est? disponible.';
+        this.error = 'No se pudo crear la cuenta. Comprueba los datos y que el servidor esté disponible.';
         this.cargando = false;
       },
     });

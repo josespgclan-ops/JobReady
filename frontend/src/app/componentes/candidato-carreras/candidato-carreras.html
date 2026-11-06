@@ -1,0 +1,22 @@
+<app-candidato-layout active="carreras">
+  <h1 class="page-title">Selecciona una carrera</h1>
+  <p class="page-intro">Explora las especialidades disponibles y sus preguntas de práctica.</p>
+  <section class="content-card careers-panel">
+    <div class="card-heading">Catálogo de carreras</div>
+    <div class="card-body">
+      <label class="form-label" for="buscar-carrera">Buscar carrera</label>
+      <input class="form-control search-input" id="buscar-carrera" type="search" placeholder="Escribe el nombre de una carrera" [(ngModel)]="busqueda">
+      @if (cargando) { <p class="info-note" role="status">Cargando carreras…</p> }
+      @if (error) { <p class="info-note" role="alert">{{ error }}</p> }
+      @if (!cargando && !error) {
+        @if (carrerasFiltradas.length) {
+          <div class="careers-grid">
+            @for (carrera of carrerasFiltradas; track carrera.idCarrera) {
+              <article class="career-card"><span class="career-icon" aria-hidden="true">▣</span><div><h2>{{ carrera.nombre }}</h2>@if (carrera.descripcion) { <p>{{ carrera.descripcion }}</p> }<a routerLink="/preguntas" [queryParams]="{ carrera: carrera.idCarrera }">Ver preguntas →</a></div></article>
+            }
+          </div>
+        } @else { <div class="empty-state"><span class="empty-icon" aria-hidden="true">⌕</span><h2>No se encontraron carreras</h2><p>Prueba con otro término de búsqueda o consulta más tarde.</p></div> }
+      }
+    </div>
+  </section>
+</app-candidato-layout>

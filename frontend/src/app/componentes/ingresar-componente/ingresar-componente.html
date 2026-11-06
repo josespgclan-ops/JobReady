@@ -1,18 +1,29 @@
-<main class="auth-page">
-  <section class="auth-card">
-    <a class="brand" routerLink="/"><span class="brand-mark">JR</span><span>Job<span>Ready</span></span></a>
-    <p class="eyebrow">QU? BUENO TENERTE DE VUELTA</p>
-    <h1>Inicia sesi?n</h1>
-    <p class="intro">Ingresa para continuar tu preparaci?n.</p>
-    <form (ngSubmit)="ingresar()">
-      <label for="username">Usuario</label>
-      <input id="username" name="username" [(ngModel)]="username" autocomplete="username" required>
-      <label for="password">Contrase?a</label>
-      <input id="password" name="password" type="password" [(ngModel)]="password" autocomplete="current-password" required>
-      @if (error) { <p class="error" role="alert">{{ error }}</p> }
-      <button class="primary-button" type="submit" [disabled]="cargando">{{ cargando ? 'Ingresando?' : 'Ingresar' }}</button>
-    </form>
-    <p class="footnote">?A?n no tienes cuenta? <a routerLink="/registro">Reg?strate</a></p>
-    <a class="back-link" routerLink="/">Volver a la p?gina principal</a>
+<main class="login-wrapper">
+  <section class="left-section" aria-labelledby="login-title">
+    <a routerLink="/" class="logo" aria-label="JobReady, volver al inicio"><span class="logo-job">Job</span><span class="logo-ready">Ready</span></a>
+    <div class="form-container">
+      <h1 id="login-title" class="title">Iniciar sesión</h1>
+      <form (ngSubmit)="ingresar()">
+        <div class="input-group">
+          <label class="sr-only" for="username">Usuario</label>
+          <input id="username" name="username" type="text" placeholder="Usuario" [(ngModel)]="username" required autocomplete="username">
+          <span class="input-icon" aria-hidden="true">◯</span>
+        </div>
+        <div class="input-group">
+          <label class="sr-only" for="password">Contraseña</label>
+          <input id="password" name="password" [type]="mostrarPassword ? 'text' : 'password'" placeholder="Contraseña" [(ngModel)]="password" required autocomplete="current-password">
+          <button type="button" class="input-icon" [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'" (click)="mostrarPassword = !mostrarPassword">{{ mostrarPassword ? '◉' : '◌' }}</button>
+        </div>
+        @if (error) { <p class="error" role="alert">{{ error }}</p> }
+        <button type="submit" class="btn-submit" [disabled]="cargando">{{ cargando ? 'INGRESANDO…' : 'INGRESAR' }}</button>
+        <div class="register-container"><p>¿No tienes una cuenta?</p><a routerLink="/registro" class="register-link">Regístrate</a></div>
+      </form>
+    </div>
   </section>
+  <aside class="right-section">
+    <div class="right-content">
+      <div><h2 class="welcome-title">BIENVENIDO</h2><p class="welcome-subtitle">Entrena, recibe retroalimentación y alcanza tu siguiente oportunidad laboral. Bienvenido a JobReady.</p></div>
+      <p class="bottom-quote">Transforma tus nervios en confianza: practica hoy la entrevista que definirá tu carrera.</p>
+    </div>
+  </aside>
 </main>

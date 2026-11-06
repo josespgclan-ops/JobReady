@@ -1,0 +1,9 @@
+<app-candidato-layout active="comparaciones">
+  <h1 class="page-title">Comparación de prácticas</h1>
+  <p class="page-intro">Compara tus evaluaciones para ver cómo cambian tus puntuaciones y recomendaciones.</p>
+  <div class="selectors-container">
+    <div><label class="form-label" for="primera">Primera simulación</label><select class="form-control" id="primera" disabled><option>Selecciona una práctica evaluada</option></select></div>
+    <div><label class="form-label" for="segunda">Segunda simulación</label><select class="form-control" id="segunda" disabled><option>Selecciona otra práctica</option></select></div>
+  </div>
+  <section class="content-card"><div class="card-heading">Resultados de la comparación</div><div class="empty-state"><span class="empty-icon" aria-hidden="true">⇄</span><h2>Necesitas dos evaluaciones publicadas</h2><p>La comparación se habilitará cuando el sistema pueda consultar tus evaluaciones personales de forma segura.</p><a routerLink="/historial" class="primary-link">Ver historial</a></div></section>
+</app-candidato-layout>

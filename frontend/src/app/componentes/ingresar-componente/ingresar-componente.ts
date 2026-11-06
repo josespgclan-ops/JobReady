@@ -16,15 +16,22 @@ export class IngresarComponente {
   protected password = '';
   protected cargando = false;
   protected error = '';
+  protected mostrarPassword = false;
 
   ingresar(): void {
-    if (this.cargando) return;
+    if (this.cargando || !this.username.trim() || !this.password) return;
     this.cargando = true;
     this.error = '';
-    this.auth.ingresar({ username: this.username, password: this.password }).subscribe({
-      next: () => void this.router.navigateByUrl('/preguntas'),
+    this.auth.ingresar({ username: this.username.trim(), password: this.password }).subscribe({
+      next: (respuesta) => {
+        const roles = respuesta.roles;
+        const destino = roles.includes('ROLE_ADMIN') ? '/administracion'
+          : roles.includes('ROLE_EVALUADOR') ? '/evaluador'
+          : roles.includes('ROLE_CANDIDATO') ? '/panel' : '/acceso-denegado';
+        void this.router.navigateByUrl(destino);
+      },
       error: () => {
-        this.error = 'No fue posible iniciar sesi?n. Comprueba los datos y que el backend est? disponible.';
+        this.error = 'No fue posible iniciar sesión. Comprueba tus datos y que el servidor esté disponible.';
         this.cargando = false;
       },
     });

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PreguntasServicio } from '../../servicios/preguntas-servicio';
 import { AuthService } from '../../servicios/auth-service';
 import { PreguntaEntrevista } from '../../modelos/api-modelos';
@@ -23,6 +23,7 @@ export class PreguntasComponente implements OnInit {
   private readonly preguntasServicio = inject(PreguntasServicio);
   private readonly carrerasServicio = inject(CarrerasServicio);
   private readonly authService = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
   protected preguntas: PreguntaMuestra[] = [
     {
       categoria: 'T?cnica',
@@ -47,6 +48,8 @@ export class PreguntasComponente implements OnInit {
   protected carreraSeleccionada = '';
 
   ngOnInit(): void {
+    const carrera = this.route.snapshot.queryParamMap.get('carrera');
+    if (carrera && /^\d+$/.test(carrera)) this.carreraSeleccionada = carrera;
     this.tieneSesion = this.authService.estaAutenticado();
     if (!this.tieneSesion) return;
 

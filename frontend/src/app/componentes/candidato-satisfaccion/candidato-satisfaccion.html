@@ -1,0 +1,17 @@
+<app-candidato-layout active="satisfaccion">
+  <section class="survey-container" aria-labelledby="survey-title">
+    <p class="survey-badge">☆ PORTAL DE OPINIÓN</p>
+    <h1 id="survey-title" class="page-title">Encuesta de satisfacción</h1>
+    <p class="page-intro">Después de recibir un informe podrás contarnos qué tan útil fue la retroalimentación.</p>
+    <p class="info-note">Vista previa del formulario. El envío se habilitará cuando una evaluación publicada esté vinculada a tu cuenta.</p>
+    <form class="survey-form" aria-label="Vista previa de encuesta">
+      <fieldset disabled>
+        <legend>Tu opinión sobre JobReady</legend>
+        <div class="survey-block"><label class="form-label">¿Cuál es tu nivel de satisfacción general?</label><div class="stars-preview" aria-hidden="true">☆ ☆ ☆ ☆ ☆</div></div>
+        <div class="survey-block"><label class="form-label" for="servicio">¿Cómo calificarías nuestro servicio?</label><select id="servicio" class="form-control"><option>Selecciona una opción</option><option>Excelente</option><option>Bueno</option><option>Regular</option><option>Malo</option></select></div>
+        <div class="survey-block"><label class="form-label" for="comentario">¿Tienes algún comentario adicional?</label><textarea id="comentario" class="form-control" rows="4" placeholder="Escribe aquí tus sugerencias"></textarea></div>
+        <button type="button" class="survey-submit">Enviar encuesta</button>
+      </fieldset>
+    </form>
+  </section>
+</app-candidato-layout>
