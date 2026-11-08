@@ -28,6 +28,11 @@ export class SimulacionesServicio {
   crearEvaluacion<T extends RegistroApi>(datos: Partial<T>): Observable<T> { return this.recurso<T>('evaluaciones-simulacion', 'evaluacion-simulacion').crear(datos); }
   actualizarEvaluacion<T extends RegistroApi>(id: number, datos: Partial<T>): Observable<T> { return this.recurso<T>('evaluaciones-simulacion', 'evaluacion-simulacion').actualizar(id, datos); }
   eliminarEvaluacion<T extends RegistroApi>(id: number): Observable<void> { return this.recurso<T>('evaluaciones-simulacion', 'evaluacion-simulacion').eliminar(id); }
+  obtenerResultado(idSimuacion: number): Observable<ResultadoSimulacion> {
+    return this.http.get<ResultadoSimulacion>(
+      `${API_BASE_URL}/resultado/${idSimulacion}`
+    );
+}
 
   listarSesiones<T extends RegistroApi>(): Observable<T[]> { return this.recurso<T>('sesiones-programadas', 'sesion-programada').listar(); }
   crearSesion<T extends RegistroApi>(datos: Partial<T>): Observable<T> { return this.recurso<T>('sesiones-programadas', 'sesion-programada').crear(datos); }

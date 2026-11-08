@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.List;
+import com.jobready.web.dtos.ResultadoSimulacionDTO;
+
 
 @Service
 public class EvaluacionSimulacionServicio implements Serializable {
@@ -18,6 +20,28 @@ public class EvaluacionSimulacionServicio implements Serializable {
 
     public List<EvaluacionSimulacion> listar() {
         return evaluacionSimulacionRepositorio.findAll();
+    }
+
+    public ResultadoSimulacionDTO obtenerResultado(Integer idSimulacion) {
+        EvaluacionSimulacion evaluacion =
+                evaluacionSimulacionRepositorio
+                        .findBySimulacion_IdSimulacion(idSimulacion);
+        String nombreEspecialista = null;
+        if (evaluacion == null) {
+            throw new RuntimeException("No existe una evaluacion");
+        }
+        if (evaluacion.getEspecialista() != null) {
+            nombreEspecialista = evaluacion.getEspecialista().getNombreCompleto();
+        }
+        return new ResultadoSimulacionDTO(
+                evaluacion.getSimulacion().getIdSimulacion(),
+                evaluacion.getPuntajeGeneral(),
+                evaluacion.getNivelComunicacion(),
+                evaluacion.getTiempoPromedioRespuesta(),
+                evaluacion.getSeguridadCalificacion(),
+                evaluacion.getFeedbackResumen(),
+                nombreEspecialista
+        );
     }
 
     public EvaluacionSimulacion actualizar(Integer id, EvaluacionSimulacion datos) {

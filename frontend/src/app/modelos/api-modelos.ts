@@ -40,3 +40,13 @@ export interface PreguntaEntrevistaRequest {
   nivelDificultad: string;
   activo: boolean;
 }
+
+export interface ResultadoSimulacion {
+  idSimulacion: number;
+  puntajeGeneral: number;
+  nivelComunicacion: string;
+  tiempoPromedioRespuesta: number;
+  seguridadCalificacion: number;
+  resumenFeedback: string;
+  nombreEspecialista: string;
+}

@@ -1,5 +1,6 @@
 package com.jobready.web.controladores;
 
+import com.jobready.web.dtos.ResultadoSimulacionDTO;
 import com.jobready.web.entidades.EvaluacionSimulacion;
 import com.jobready.web.dtos.EvaluacionSimulacionDTO;
 import com.jobready.web.servicios.EvaluacionSimulacionServicio;
@@ -38,4 +39,12 @@ public class EvaluacionSimulacionController {
     public void eliminar(@PathVariable Integer id) {
         evaluacionSimulacionServicio.eliminar(id);
     }
+
+    @GetMapping("/resultado/{idSimulacion}")
+    @PreAuthorize("hasRole('CANDIDATO')")
+    public ResultadoSimulacionDTO obtenerResultado(
+            @PathVariable Integer idSimulacion){
+        return evaluacionSimulacionServicio.obtenerResultado(idSimulacion);
+    }
+
 }

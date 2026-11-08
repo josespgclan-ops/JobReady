@@ -8,21 +8,21 @@
   </header>
 
   <section class="questions-content" aria-labelledby="questions-title">
-    <p class="eyebrow">TU PR?XIMO PASO</p>
+    <p class="eyebrow">TU PROXIMO PASO</p>
     <h1 id="questions-title">Banco de preguntas</h1>
     <p class="intro">
-      Explora preguntas de pr?ctica para preparar tus respuestas antes de una entrevista.
+      Explora preguntas de practica para preparar tus respuestas antes de una entrevista.
     </p>
 
     @if (!tieneSesion) {
     <div class="preview-note" role="note">
       <span aria-hidden="true">?</span>
-      <p>Vista de avance: inicia sesi?n para cargar preguntas del backend. Mientras tanto, aqu? ves ejemplos de la interfaz.</p>
+      <p>Vista de avance: inicia sesion para cargar preguntas del backend. Mientras tanto, aqui ves ejemplos de la interfaz.</p>
     </div>
-    <a class="home-button" routerLink="/ingresar">Iniciar sesi?n</a>
+    <a class="home-button" routerLink="/ingresar">Iniciar sesion</a>
     }
 
-    @if (cargando) { <p role="status">Cargando preguntas?</p> }
+    @if (cargando) { <p role="status">Cargando preguntas</p> }
     @if (mensaje) { <p class="preview-note" role="status">{{ mensaje }}</p> }
 
     @if (tieneSesion && carreras.length) {
@@ -43,7 +43,7 @@
             <span class="difficulty">{{ pregunta.dificultad }}</span>
           </div>
           <h2>{{ pregunta.texto }}</h2>
-          <p>Piensa en un ejemplo concreto y explica qu? hiciste y cu?l fue el resultado.</p>
+          <p>Piensa en un ejemplo concreto y explica que hiciste y cual fue el resultado.</p>
         </article>
       }
     </div>
