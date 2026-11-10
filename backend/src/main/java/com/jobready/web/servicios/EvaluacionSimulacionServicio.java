@@ -39,6 +39,15 @@ public class EvaluacionSimulacionServicio implements Serializable {
         if (evaluacionSimulacionRepositorio.findBySimulacion_IdSimulacion(evaluacion.getSimulacion().getIdSimulacion()) != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Esta simulacion ya fue evaluada por otro especialista");
         }
+        validarRubrica(evaluacion);
+        Usuario especialista = usuarioRepositorio.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+        evaluacion.setEspecialista(especialista);
+        evaluacion.setEvaluadoPorEspecialista(true);
+        return evaluacionSimulacionRepositorio.save(evaluacion);
+    }
+
+    private void validarRubrica(EvaluacionSimulacion evaluacion) {
         Integer puntaje = evaluacion.getPuntajeGeneral();
         if (puntaje == null || puntaje < 0 || puntaje > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El puntaje general debe estar entre 0 y 100");
@@ -52,11 +61,6 @@ public class EvaluacionSimulacionServicio implements Serializable {
                 || evaluacion.getFeedbackResumen() == null || evaluacion.getFeedbackResumen().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Completa el nivel de comunicacion y el feedback");
         }
-        Usuario especialista = usuarioRepositorio.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
-        evaluacion.setEspecialista(especialista);
-        evaluacion.setEvaluadoPorEspecialista(true);
-        return evaluacionSimulacionRepositorio.save(evaluacion);
     }
 
     public List<EvaluacionSimulacion> listarPorEspecialista(String username) {
@@ -90,25 +94,34 @@ public class EvaluacionSimulacionServicio implements Serializable {
         );
     }
 
-    public EvaluacionSimulacion actualizar(Integer id, EvaluacionSimulacion datos) {
-        EvaluacionSimulacion evaluacion = evaluacionSimulacionRepositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe la evaluacion con id " + id));
-        evaluacion.setSimulacion(datos.getSimulacion());
+    /** El evaluador solo puede corregir sus propias evaluaciones; el autor y la simulación no cambian. */
+    public EvaluacionSimulacion actualizarPropia(Integer id, EvaluacionSimulacion datos, String username) {
+        EvaluacionSimulacion evaluacion = buscarPropia(id, username);
+        validarRubrica(datos);
         evaluacion.setPuntajeGeneral(datos.getPuntajeGeneral());
         evaluacion.setNivelComunicacion(datos.getNivelComunicacion());
         evaluacion.setTiempoPromedioRespuesta(datos.getTiempoPromedioRespuesta());
         evaluacion.setSeguridadCalificacion(datos.getSeguridadCalificacion());
         evaluacion.setFeedbackResumen(datos.getFeedbackResumen());
-        evaluacion.setEvaluadoPorEspecialista(datos.getEvaluadoPorEspecialista());
-        evaluacion.setEspecialista(datos.getEspecialista());
         return evaluacionSimulacionRepositorio.save(evaluacion);
     }
 
-    public void eliminar(Integer id) {
-        if (!evaluacionSimulacionRepositorio.existsById(id)) {
-            throw new RuntimeException("No existe la evaluacion con id " + id);
+    /** Si username es null (administrador) puede borrar cualquiera; si no, solo las propias. */
+    public void eliminar(Integer id, String username) {
+        EvaluacionSimulacion evaluacion = username == null
+                ? evaluacionSimulacionRepositorio.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la evaluacion con id " + id))
+                : buscarPropia(id, username);
+        evaluacionSimulacionRepositorio.delete(evaluacion);
+    }
+
+    private EvaluacionSimulacion buscarPropia(Integer id, String username) {
+        EvaluacionSimulacion evaluacion = evaluacionSimulacionRepositorio.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la evaluacion con id " + id));
+        if (evaluacion.getEspecialista() == null || !username.equals(evaluacion.getEspecialista().getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Solo puedes modificar tus propias evaluaciones");
         }
-        evaluacionSimulacionRepositorio.deleteById(id);
+        return evaluacion;
     }
 }
 

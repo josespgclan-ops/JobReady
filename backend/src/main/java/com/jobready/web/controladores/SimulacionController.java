@@ -22,7 +22,7 @@ public class SimulacionController {
     }
 
     @GetMapping("/simulaciones")
-    @PreAuthorize("hasAnyRole('ADMIN', 'CANDIDATO', 'EVALUADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EVALUADOR')") // el candidato usa /simulaciones/mias
     public List<Simulacion> listar() {
         return simulacionServicio.listar();
     }

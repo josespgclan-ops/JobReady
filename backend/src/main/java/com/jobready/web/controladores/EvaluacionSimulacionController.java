@@ -24,7 +24,7 @@ public class EvaluacionSimulacionController {
     }
 
     @GetMapping("/evaluaciones-simulacion")
-    @PreAuthorize("hasAnyRole('ADMIN', 'CANDIDATO', 'EVALUADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EVALUADOR')") // el candidato usa /resultado/{idSimulacion}
     public List<EvaluacionSimulacion> listar() {
         return evaluacionSimulacionServicio.listar();
     }
@@ -32,14 +32,17 @@ public class EvaluacionSimulacionController {
     @PutMapping("/evaluacion-simulacion/{id}")
     @PreAuthorize("hasRole('EVALUADOR')")
     public EvaluacionSimulacion actualizar(@PathVariable Integer id,
-                                           @RequestBody EvaluacionSimulacionDTO evaluacionSimulacionDTO) {
-        return evaluacionSimulacionServicio.actualizar(id, evaluacionSimulacionDTO.convertirAEntidad());
+                                           @RequestBody EvaluacionSimulacionDTO evaluacionSimulacionDTO,
+                                           Authentication authentication) {
+        return evaluacionSimulacionServicio.actualizarPropia(id, evaluacionSimulacionDTO.convertirAEntidad(), authentication.getName());
     }
 
     @DeleteMapping("/evaluacion-simulacion/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'EVALUADOR')")
-    public void eliminar(@PathVariable Integer id) {
-        evaluacionSimulacionServicio.eliminar(id);
+    public void eliminar(@PathVariable Integer id, Authentication authentication) {
+        boolean esAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        evaluacionSimulacionServicio.eliminar(id, esAdmin ? null : authentication.getName());
     }
 
     /** US21: evaluaciones registradas por el evaluador que inició sesión. */
