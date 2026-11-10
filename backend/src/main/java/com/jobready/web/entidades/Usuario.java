@@ -1,5 +1,6 @@
 package com.jobready.web.entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -26,6 +27,7 @@ public class Usuario {
     @Column(nullable = false, unique = true, length = 50)
     private String username;
     @Column(name = "password_hash", nullable = false, length = 255)
+    @JsonIgnore // Nunca se envía el hash de la contraseña en las respuestas JSON.
     private String passwordHash;
     @Column(length = 20)
     private String telefono;

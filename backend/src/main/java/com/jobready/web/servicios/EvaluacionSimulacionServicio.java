@@ -2,17 +2,23 @@ package com.jobready.web.servicios;
 
 import com.jobready.web.entidades.EvaluacionSimulacion;
 import com.jobready.web.repositorios.EvaluacionSimulacionRepositorio;
+import com.jobready.web.repositorios.UsuarioRepositorio;
+import com.jobready.web.entidades.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.List;
 import com.jobready.web.dtos.ResultadoSimulacionDTO;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Service
 public class EvaluacionSimulacionServicio implements Serializable {
     @Autowired
     private EvaluacionSimulacionRepositorio evaluacionSimulacionRepositorio;
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
 
     public EvaluacionSimulacion insertar(EvaluacionSimulacion evaluacionSimulacion) {
         return evaluacionSimulacionRepositorio.save(evaluacionSimulacion);
@@ -22,13 +28,53 @@ public class EvaluacionSimulacionServicio implements Serializable {
         return evaluacionSimulacionRepositorio.findAll();
     }
 
-    public ResultadoSimulacionDTO obtenerResultado(Integer idSimulacion) {
+    /**
+     * US06: registra la evaluación con el evaluador que inició sesión como especialista.
+     * Valida los rangos y evita evaluar dos veces la misma simulación.
+     */
+    public EvaluacionSimulacion registrarComoEspecialista(EvaluacionSimulacion evaluacion, String username) {
+        if (evaluacion.getSimulacion() == null || evaluacion.getSimulacion().getIdSimulacion() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Falta la simulacion a evaluar");
+        }
+        if (evaluacionSimulacionRepositorio.findBySimulacion_IdSimulacion(evaluacion.getSimulacion().getIdSimulacion()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Esta simulacion ya fue evaluada por otro especialista");
+        }
+        Integer puntaje = evaluacion.getPuntajeGeneral();
+        if (puntaje == null || puntaje < 0 || puntaje > 100) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El puntaje general debe estar entre 0 y 100");
+        }
+        if (evaluacion.getSeguridadCalificacion() == null
+                || evaluacion.getSeguridadCalificacion().compareTo(java.math.BigDecimal.ZERO) < 0
+                || evaluacion.getSeguridadCalificacion().compareTo(java.math.BigDecimal.ONE) > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La seguridad debe estar entre 0 y 1");
+        }
+        if (evaluacion.getNivelComunicacion() == null || evaluacion.getNivelComunicacion().isBlank()
+                || evaluacion.getFeedbackResumen() == null || evaluacion.getFeedbackResumen().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Completa el nivel de comunicacion y el feedback");
+        }
+        Usuario especialista = usuarioRepositorio.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+        evaluacion.setEspecialista(especialista);
+        evaluacion.setEvaluadoPorEspecialista(true);
+        return evaluacionSimulacionRepositorio.save(evaluacion);
+    }
+
+    public List<EvaluacionSimulacion> listarPorEspecialista(String username) {
+        return evaluacionSimulacionRepositorio.findByEspecialista_UsernameOrderByIdEvaluacionDesc(username);
+    }
+
+    public ResultadoSimulacionDTO obtenerResultado(Integer idSimulacion, String username) {
         EvaluacionSimulacion evaluacion =
                 evaluacionSimulacionRepositorio
                         .findBySimulacion_IdSimulacion(idSimulacion);
         String nombreEspecialista = null;
         if (evaluacion == null) {
-            throw new RuntimeException("No existe una evaluacion");
+            // 404: la simulación todavía no tiene evaluación publicada.
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La simulacion aun no tiene evaluacion");
+        }
+        // 403: un candidato solo puede ver el resultado de sus propias simulaciones.
+        if (!evaluacion.getSimulacion().getUsuario().getUsername().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La simulacion pertenece a otro usuario");
         }
         if (evaluacion.getEspecialista() != null) {
             nombreEspecialista = evaluacion.getEspecialista().getNombreCompleto();

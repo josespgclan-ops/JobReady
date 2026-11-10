@@ -6,6 +6,7 @@ import com.jobready.web.servicios.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,13 @@ public class UsuarioController {
     }
 
     @PatchMapping("/usuario/{id}/desactivar")
-    public Usuario desactivar(@PathVariable Integer id) {
-        return usuarioServicio.desactivar(id);
+    public Usuario desactivar(@PathVariable Integer id, Authentication authentication) {
+        return usuarioServicio.desactivar(id, authentication.getName());
+    }
+
+    /** US12: reactivar una cuenta suspendida. */
+    @PatchMapping("/usuario/{id}/activar")
+    public Usuario activar(@PathVariable Integer id) {
+        return usuarioServicio.activar(id);
     }
 }

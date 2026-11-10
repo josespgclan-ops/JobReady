@@ -7,6 +7,7 @@ import com.jobready.web.servicios.EvaluacionSimulacionServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @RestController
@@ -17,8 +18,9 @@ public class EvaluacionSimulacionController {
 
     @PostMapping("/evaluacion-simulacion")
     @PreAuthorize("hasRole('EVALUADOR')")
-    public EvaluacionSimulacion insertar(@RequestBody EvaluacionSimulacionDTO evaluacionSimulacionDTO) {
-        return evaluacionSimulacionServicio.insertar(evaluacionSimulacionDTO.convertirAEntidad());
+    public EvaluacionSimulacion insertar(@RequestBody EvaluacionSimulacionDTO evaluacionSimulacionDTO,
+                                         Authentication authentication) {
+        return evaluacionSimulacionServicio.registrarComoEspecialista(evaluacionSimulacionDTO.convertirAEntidad(), authentication.getName());
     }
 
     @GetMapping("/evaluaciones-simulacion")
@@ -40,11 +42,18 @@ public class EvaluacionSimulacionController {
         evaluacionSimulacionServicio.eliminar(id);
     }
 
+    /** US21: evaluaciones registradas por el evaluador que inició sesión. */
+    @GetMapping("/evaluaciones-simulacion/mias")
+    @PreAuthorize("hasRole('EVALUADOR')")
+    public List<EvaluacionSimulacion> listarMias(Authentication authentication) {
+        return evaluacionSimulacionServicio.listarPorEspecialista(authentication.getName());
+    }
+
     @GetMapping("/resultado/{idSimulacion}")
     @PreAuthorize("hasRole('CANDIDATO')")
-    public ResultadoSimulacionDTO obtenerResultado(
-            @PathVariable Integer idSimulacion){
-        return evaluacionSimulacionServicio.obtenerResultado(idSimulacion);
+    public ResultadoSimulacionDTO obtenerResultado(@PathVariable Integer idSimulacion,
+                                                   Authentication authentication) {
+        return evaluacionSimulacionServicio.obtenerResultado(idSimulacion, authentication.getName());
     }
 
 }

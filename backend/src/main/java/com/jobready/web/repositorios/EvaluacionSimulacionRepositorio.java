@@ -9,6 +9,8 @@ import java.util.Optional;
 @Repository
 public interface EvaluacionSimulacionRepositorio extends JpaRepository<EvaluacionSimulacion, Integer> {
     EvaluacionSimulacion findBySimulacion_IdSimulacion(Integer idSimulacion);
+
+    java.util.List<EvaluacionSimulacion> findByEspecialista_UsernameOrderByIdEvaluacionDesc(String username);
 }
 
 
