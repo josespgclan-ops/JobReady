@@ -2,7 +2,13 @@
   <header class="public-header">
     <div class="header-top">
       <a routerLink="/" class="logo" aria-label="JobReady, inicio"><span>Job</span><strong>Ready</strong></a>
-      <div class="account-links"><a routerLink="/ingresar">Iniciar sesión</a><a class="register-link" routerLink="/registro">Registrarse</a></div>
+      <div class="account-links">
+        @if (tieneSesion) {
+          <a class="register-link" routerLink="/mi-panel">Mi panel</a>
+        } @else {
+          <a routerLink="/ingresar">Iniciar sesión</a><a class="register-link" routerLink="/registro">Registrarse</a>
+        }
+      </div>
     </div>
     <nav class="public-nav" aria-label="Navegación principal">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">INICIO</a>

@@ -19,12 +19,15 @@
         <a routerLink="/planes">Planes</a>
         <a routerLink="/novedades">Novedades</a>
         <a routerLink="/contacto">Contacto</a>
-        <a routerLink="/historial">Historial</a>
       </div>
 
       <div class="nav-actions">
-        <a class="text-link" routerLink="/ingresar">Iniciar sesión</a>
-        <a class="button button-small" routerLink="/registro">Registrarse</a>
+        @if (tieneSesion) {
+          <a class="button button-small" routerLink="/mi-panel">Mi panel</a>
+        } @else {
+          <a class="text-link" routerLink="/ingresar">Iniciar sesión</a>
+          <a class="button button-small" routerLink="/registro">Registrarse</a>
+        }
       </div>
     </nav>
   </header>

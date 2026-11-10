@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Carrera } from '../../modelos/api-modelos';
@@ -7,6 +7,8 @@ import { CandidatoLayoutComponente } from '../candidato-layout/candidato-layout'
 
 @Component({
   selector: 'app-candidato-carreras',
+  // Angular 22 usa OnPush por defecto; esta vista cambia al llegar datos de la API.
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, RouterLink, CandidatoLayoutComponente],
   templateUrl: './candidato-carreras.html',
   styleUrls: ['../candidato-layout/candidato-content.css', './candidato-carreras.css'],

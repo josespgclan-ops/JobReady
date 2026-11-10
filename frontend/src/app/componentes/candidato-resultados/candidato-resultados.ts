@@ -1,14 +1,20 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { DecimalPipe, PercentPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ResultadoSimulacion } from '../../modelos/api-modelos';
+import { SimulacionesServicio } from '../../servicios/simulaciones-servicio';
 import { CandidatoLayoutComponente } from '../candidato-layout/candidato-layout';
 
 @Component({
   selector: 'app-candidato-resultados',
-  imports: [RouterLink, CandidatoLayoutComponente],
+  // Angular 22 usa OnPush por defecto; esta vista cambia al llegar datos de la API.
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [RouterLink, DecimalPipe, PercentPipe, CandidatoLayoutComponente],
   templateUrl: './candidato-resultados.html',
   styleUrls: ['../candidato-layout/candidato-content.css', './candidato-resultados.css'],
 })
-export class CandidatoResultadosComponente {
+export class CandidatoResultadosComponente implements OnInit {
   private readonly simulacionesServicio = inject(SimulacionesServicio);
   private readonly route = inject(ActivatedRoute);
 
@@ -34,8 +40,12 @@ export class CandidatoResultadosComponente {
         this.cargando = false;
       },
 
-      error: () => {
-        this.error = 'No se pudo cargar el resultado de la simulación.';
+      error: (respuesta: HttpErrorResponse) => {
+        this.error = respuesta.status === 404
+          ? 'Esta práctica todavía no tiene un informe publicado.'
+          : respuesta.status === 403
+            ? 'Este informe pertenece a otra cuenta.'
+            : 'No se pudo cargar el resultado de la simulación.';
         this.cargando = false;
       },
     });
