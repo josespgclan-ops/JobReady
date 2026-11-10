@@ -1,5 +1,45 @@
 <app-candidato-layout active="resultados">
   <h1 class="page-title">Mis resultados</h1>
-  <p class="page-intro">Consulta tus informes de desempeño cuando un evaluador publique la retroalimentación.</p>
-  <section class="content-card"><div class="card-heading">Informe de desempeño</div><div class="empty-state"><span class="empty-icon" aria-hidden="true">▥</span><h2>Aún no hay un informe disponible</h2><p>Los puntajes, observaciones y grabaciones con comentarios aparecerán aquí cuando estén vinculados de forma segura a tu cuenta.</p><a routerLink="/historial" class="primary-link">Ir al historial</a></div></section>
+  <p class="page-intro">Consulta tu informe de desempeño y la retroalimentación realizada por el evaluador.</p>
+
+  @if (cargando) {
+    <section class="content-card"><p class="card-body" role="status">Cargando resultado…</p></section>
+  }
+
+  @if (error) {
+    <section class="content-card">
+      <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">!</span>
+        <h2>{{ error }}</h2>
+        <a routerLink="/historial" class="primary-link">Volver al historial</a>
+      </div>
+    </section>
+  }
+
+  @if (resultado) {
+    <section class="content-card" aria-labelledby="titulo-informe">
+      <div class="card-heading" id="titulo-informe">Informe de desempeño</div>
+      <div class="card-body">
+        <h2>Puntaje general: {{ resultado.puntajeGeneral }}/100</h2>
+        <p><strong>Nivel de comunicación:</strong> {{ resultado.nivelComunicacion }}</p>
+        <p><strong>Seguridad:</strong> {{ resultado.seguridadCalificacion | percent: '1.0-0' }}</p>
+        <p><strong>Tiempo promedio de respuesta:</strong> {{ resultado.tiempoPromedioRespuesta | number: '1.0-1' }} segundos</p>
+        <p><strong>Evaluador:</strong> {{ resultado.nombreEspecialista || 'Sin asignar' }}</p>
+        <h3>Feedback general</h3>
+        <p>{{ resultado.resumenFeedback }}</p>
+        <a routerLink="/historial" class="secondary-link">← Volver al historial</a>
+      </div>
+    </section>
+  }
+
+  @if (!resultado && !cargando && !error) {
+    <section class="content-card">
+      <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">▥</span>
+        <h2>Selecciona una simulación</h2>
+        <p>Ingresa desde tu historial para consultar el resultado de una entrevista evaluada.</p>
+        <a routerLink="/historial" class="primary-link">Ir al historial</a>
+      </div>
+    </section>
+  }
 </app-candidato-layout>

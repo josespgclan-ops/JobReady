@@ -20,6 +20,13 @@ import { AdministracionComponente } from './componentes/administracion-component
 import { EvaluadorComponente } from './componentes/evaluador-componente/evaluador-componente';
 import { AccesoDenegadoComponente } from './componentes/acceso-denegado-componente/acceso-denegado-componente';
 import { MiPanelComponente } from './componentes/mi-panel-componente/mi-panel-componente';
+import { EvaluadorPendientes } from './componentes/evaluador-pendientes/evaluador-pendientes';
+import { EvaluadorEvaluar } from './componentes/evaluador-evaluar/evaluador-evaluar';
+import { EvaluadorEvaluaciones } from './componentes/evaluador-evaluaciones/evaluador-evaluaciones';
+import { AdminPreguntas } from './componentes/admin-preguntas/admin-preguntas';
+import { AdminCarreras } from './componentes/admin-carreras/admin-carreras';
+import { AdminUsuarios } from './componentes/admin-usuarios/admin-usuarios';
+import { AdminPendientes } from './componentes/admin-pendientes/admin-pendientes';
 import { requiereRol, requiereSesion } from './servicios/rol-guard';
 
 export const routes: Routes = [
@@ -42,8 +49,17 @@ export const routes: Routes = [
   { path: 'organizar', component: CandidatoOrganizarComponente, canActivate: [requiereRol('CANDIDATO')] },
   { path: 'carreras', component: CandidatoCarrerasComponente, canActivate: [requiereRol('CANDIDATO')] },
   { path: 'satisfaccion', component: CandidatoSatisfaccionComponente, canActivate: [requiereRol('CANDIDATO')] },
+  // Administrador: gestión de la plataforma.
   { path: 'administracion', component: AdministracionComponente, canActivate: [requiereRol('ADMIN')] },
+  { path: 'administracion/preguntas', component: AdminPreguntas, canActivate: [requiereRol('ADMIN')] },
+  { path: 'administracion/carreras', component: AdminCarreras, canActivate: [requiereRol('ADMIN')] },
+  { path: 'administracion/usuarios', component: AdminUsuarios, canActivate: [requiereRol('ADMIN')] },
+  { path: 'administracion/pendientes', component: AdminPendientes, canActivate: [requiereRol('ADMIN')] },
+  // Evaluador: revisión de prácticas.
   { path: 'evaluador', component: EvaluadorComponente, canActivate: [requiereRol('EVALUADOR')] },
+  { path: 'evaluador/pendientes', component: EvaluadorPendientes, canActivate: [requiereRol('EVALUADOR')] },
+  { path: 'evaluador/evaluar/:id', component: EvaluadorEvaluar, canActivate: [requiereRol('EVALUADOR')] },
+  { path: 'evaluador/evaluaciones', component: EvaluadorEvaluaciones, canActivate: [requiereRol('EVALUADOR')] },
   { path: 'acceso-denegado', component: AccesoDenegadoComponente },
   { path: '**', redirectTo: '' }
 ];

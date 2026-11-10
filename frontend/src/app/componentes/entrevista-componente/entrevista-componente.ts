@@ -1,9 +1,11 @@
-import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { CandidatoLayoutComponente } from '../candidato-layout/candidato-layout';
 
 @Component({
   selector: 'app-entrevista-componente',
-  imports: [RouterLink],
+  // Angular 22 usa OnPush por defecto; esta vista cambia al llegar datos de la API.
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [CandidatoLayoutComponente],
   templateUrl: './entrevista-componente.html',
   styleUrl: './entrevista-componente.css',
 })

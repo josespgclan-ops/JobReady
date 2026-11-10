@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../servicios/auth-service';
 
 @Component({
   selector: 'app-registro-componente',
+  // Angular 22 usa OnPush por defecto; esta vista cambia al llegar datos de la API.
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, RouterLink],
   templateUrl: './registro-componente.html',
   styleUrl: './registro-componente.css',

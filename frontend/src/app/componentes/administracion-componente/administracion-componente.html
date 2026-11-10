@@ -1,8 +1,33 @@
-<app-panel-rol-layout rol="Administración">
-  <div class="heading"><span>Panel de administración</span><h1>Gestiona los contenidos de JobReady</h1><p>Accede a las herramientas disponibles y revisa el avance de los módulos del proyecto.</p></div>
+<app-panel-rol-layout active="panel">
+  <div class="heading">
+    <span class="tag">Panel de administración</span>
+    <h1>Estado de la plataforma</h1>
+    <p>Métricas generales de JobReady y accesos a la gestión de contenidos y usuarios.</p>
+  </div>
+
+  @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
+
+  <h2 class="section-title">Uso de la plataforma</h2>
+  <div class="stats" aria-live="polite">
+    <div class="stat"><strong>{{ cargando ? '…' : metricas.simulaciones }}</strong><span>Prácticas creadas</span></div>
+    <div class="stat"><strong>{{ cargando ? '…' : metricas.evaluaciones }}</strong><span>Evaluaciones emitidas</span></div>
+    <div class="stat" [class.alert]="metricas.pendientes > 0"><strong>{{ cargando ? '…' : metricas.pendientes }}</strong><span>Esperando evaluación</span></div>
+    <div class="stat"><strong>{{ cargando ? '…' : (metricas.promedio === null ? '—' : (metricas.promedio | number: '1.0-1')) }}</strong><span>Puntaje promedio</span></div>
+  </div>
+
+  <h2 class="section-title">Usuarios y contenidos</h2>
+  <div class="stats">
+    <div class="stat"><strong>{{ cargando ? '…' : metricas.candidatos }}</strong><span>Candidatos</span></div>
+    <div class="stat"><strong>{{ cargando ? '…' : metricas.evaluadores }}</strong><span>Evaluadores</span></div>
+    <div class="stat"><strong>{{ cargando ? '…' : metricas.suspendidos }}</strong><span>Cuentas suspendidas</span></div>
+    <div class="stat"><strong>{{ cargando ? '…' : metricas.preguntasActivas }}</strong><span>Preguntas activas</span></div>
+    <div class="stat"><strong>{{ cargando ? '…' : metricas.carrerasActivas }}</strong><span>Carreras activas</span></div>
+  </div>
+
   <div class="cards">
-    <article class="card"><span class="card-icon" aria-hidden="true">▤</span><h2>Banco de preguntas</h2><p>Consulta las preguntas registradas y filtra por carrera.</p><a routerLink="/preguntas">Ver preguntas →</a></article>
-    <article class="card muted"><span class="card-icon" aria-hidden="true">▧</span><h2>Gestión de usuarios</h2><p>La moderación de cuentas requiere validar las acciones administrativas en el backend.</p><span class="status">Pendiente de integración</span></article>
-    <article class="card muted"><span class="card-icon" aria-hidden="true">◫</span><h2>Métricas y reportes</h2><p>Las métricas de uso y el reporte de entrevistas en espera necesitan consultas específicas.</p><span class="status">Pendiente de integración</span></article>
+    <article class="card"><h2>Gestionar preguntas</h2><p>Crea, edita y desactiva las preguntas del banco.</p><a routerLink="/administracion/preguntas">Ir a preguntas →</a></article>
+    <article class="card"><h2>Carreras</h2><p>Agrega nuevas especialidades o desactiva las que ya no se ofrecen.</p><a routerLink="/administracion/carreras">Ir a carreras →</a></article>
+    <article class="card"><h2>Usuarios</h2><p>Suspende o reactiva cuentas de candidatos y evaluadores.</p><a routerLink="/administracion/usuarios">Ir a usuarios →</a></article>
+    <article class="card"><h2>Revisiones pendientes</h2><p>Detecta las prácticas que llevan tiempo sin evaluación.</p><a routerLink="/administracion/pendientes">Ver reporte →</a></article>
   </div>
 </app-panel-rol-layout>

@@ -1,0 +1,94 @@
+<app-panel-rol-layout active="gestion-preguntas">
+  <div class="heading">
+    <span class="tag">Contenidos</span>
+    <h1>Gestionar preguntas</h1>
+    <p>Registra nuevas preguntas por carrera, edítalas o desactívalas cuando queden obsoletas.</p>
+  </div>
+
+  @if (mensaje) { <p class="notice ok" role="status">✓ {{ mensaje }}</p> }
+  @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
+
+  <section class="box" id="form-pregunta" aria-labelledby="titulo-form">
+    <h2 class="box-title" id="titulo-form">{{ editandoId ? 'Editar pregunta' : 'Nueva pregunta' }}</h2>
+    <form class="box-body" (ngSubmit)="guardar()" novalidate>
+      <div class="form-grid">
+        <div class="field" [class.invalid]="intentoGuardar && !formulario.idCarrera">
+          <label for="p-carrera">Carrera</label>
+          <select id="p-carrera" name="carrera" [(ngModel)]="formulario.idCarrera" required>
+            <option [ngValue]="0" disabled>Selecciona una carrera</option>
+            @for (c of carreras; track c.idCarrera) { <option [ngValue]="c.idCarrera">{{ c.nombre }}</option> }
+          </select>
+        </div>
+        <div class="field" [class.invalid]="intentoGuardar && !formulario.categoria">
+          <label for="p-categoria">Categoría</label>
+          <select id="p-categoria" name="categoria" [(ngModel)]="formulario.categoria" required>
+            <option value="" disabled>Selecciona</option>
+            @for (c of categorias; track c) { <option [value]="c">{{ c }}</option> }
+          </select>
+        </div>
+        <div class="field" [class.invalid]="intentoGuardar && !formulario.nivelDificultad">
+          <label for="p-nivel">Nivel</label>
+          <select id="p-nivel" name="nivel" [(ngModel)]="formulario.nivelDificultad" required>
+            <option value="" disabled>Selecciona</option>
+            @for (n of niveles; track n) { <option [value]="n">{{ n }}</option> }
+          </select>
+        </div>
+        <div class="field full" [class.invalid]="intentoGuardar && formulario.textoPregunta.trim().length < 10">
+          <label for="p-texto">Pregunta</label>
+          <textarea id="p-texto" name="texto" [(ngModel)]="formulario.textoPregunta" required
+                    placeholder="Ej.: Cuéntame sobre un proyecto en el que trabajaste en equipo."></textarea>
+          @if (intentoGuardar && formulario.textoPregunta.trim().length < 10) { <span class="error">Escribe al menos 10 caracteres.</span> }
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" type="submit" [disabled]="guardando">{{ guardando ? 'Guardando…' : (editandoId ? 'Guardar cambios' : 'Registrar pregunta') }}</button>
+        @if (editandoId) { <button class="btn ghost" type="button" (click)="cancelarEdicion()">Cancelar</button> }
+      </div>
+    </form>
+  </section>
+
+  <section class="box" aria-labelledby="titulo-lista">
+    <h2 class="box-title" id="titulo-lista">Banco de preguntas ({{ preguntasFiltradas.length }})</h2>
+    <div class="box-body">
+      <div class="filters">
+        <div class="field"><label for="f-buscar">Buscar</label><input id="f-buscar" type="search" [(ngModel)]="busqueda" placeholder="Texto de la pregunta"></div>
+        <div class="field"><label for="f-carrera">Carrera</label>
+          <select id="f-carrera" [(ngModel)]="filtroCarrera"><option value="">Todas</option>
+            @for (c of carreras; track c.idCarrera) { <option [value]="'' + c.idCarrera">{{ c.nombre }}</option> }
+          </select></div>
+        <div class="field"><label for="f-estado">Estado</label>
+          <select id="f-estado" [(ngModel)]="filtroEstado"><option value="activas">Activas</option><option value="inactivas">Inactivas</option><option value="todas">Todas</option></select></div>
+      </div>
+    </div>
+    @if (cargando) {
+      <p class="empty" role="status">Cargando preguntas…</p>
+    } @else if (preguntasFiltradas.length === 0) {
+      <p class="empty">No hay preguntas con esos filtros.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pregunta</th><th>Carrera</th><th>Categoría</th><th>Nivel</th><th>Estado</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+          <tbody>
+            @for (p of preguntasFiltradas; track p.idPregunta) {
+              <tr>
+                <td>{{ p.textoPregunta }}</td>
+                <td>{{ p.carrera?.nombre ?? '—' }}</td>
+                <td>{{ p.categoria }}</td>
+                <td>{{ p.nivelDificultad }}</td>
+                <td>@if (p.activo !== false) { <span class="badge">Activa</span> } @else { <span class="badge off">Inactiva</span> }</td>
+                <td class="row-actions">
+                  <button class="btn ghost small" type="button" (click)="editar(p)">Editar</button>
+                  @if (p.activo !== false) {
+                    <button class="btn danger small" type="button" (click)="desactivar(p)">Desactivar</button>
+                  } @else {
+                    <button class="btn ghost small" type="button" (click)="reactivar(p)">Reactivar</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</app-panel-rol-layout>

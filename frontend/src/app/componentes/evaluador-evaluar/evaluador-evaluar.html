@@ -1,0 +1,72 @@
+<app-panel-rol-layout active="pendientes">
+  <div class="heading">
+    <span class="tag">Paso 2 · Evaluar práctica</span>
+    <h1>{{ simulacion?.carrera?.nombre ?? 'Práctica' }}</h1>
+    <p>
+      Candidato: <strong>{{ simulacion?.usuario?.nombreCompleto ?? '—' }}</strong>
+      @if (simulacion?.fechaFin) { · terminó el {{ simulacion?.fechaFin | date: 'dd/MM/yyyy HH:mm' }} }
+    </p>
+  </div>
+
+  <a class="btn ghost small back" routerLink="/evaluador/pendientes">← Volver a pendientes</a>
+
+  @if (cargando) {
+    <p class="empty" role="status">Cargando práctica…</p>
+  } @else {
+    <div class="evaluate-grid">
+      <section class="box" aria-labelledby="titulo-respuestas">
+        <h2 class="box-title" id="titulo-respuestas">Respuestas del candidato ({{ respuestas.length }})</h2>
+        <div class="box-body answers">
+          @for (r of respuestas; track r.idRespuesta; let i = $index) {
+            <article class="answer">
+              <p class="muted">Pregunta {{ i + 1 }} · {{ r.pregunta?.categoria }} · {{ r.duracionSegundos ?? '—' }} s</p>
+              <h3>{{ r.pregunta?.textoPregunta }}</h3>
+              <p class="answer-text">{{ r.textoRespuesta || 'El candidato respondió en video; la transcripción no está disponible.' }}</p>
+            </article>
+          } @empty {
+            <p class="empty">Esta práctica no tiene respuestas registradas.</p>
+          }
+          <p class="muted">Tiempo promedio por respuesta: <strong>{{ tiempoPromedio }} s</strong> (se calcula automáticamente).</p>
+        </div>
+      </section>
+
+      <section class="box" aria-labelledby="titulo-rubrica">
+        <h2 class="box-title" id="titulo-rubrica">Rúbrica de evaluación</h2>
+        <form class="box-body" (ngSubmit)="enviar()" novalidate>
+          @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
+          <div class="form-grid">
+            <div class="field" [class.invalid]="intentoEnviar && puntajeInvalido">
+              <label for="puntaje">Puntaje general (0 a 100)</label>
+              <input id="puntaje" name="puntaje" type="number" min="0" max="100" [(ngModel)]="puntaje" required>
+              @if (intentoEnviar && puntajeInvalido) { <span class="error">Ingresa un número entre 0 y 100.</span> }
+            </div>
+            <div class="field" [class.invalid]="intentoEnviar && seguridadInvalida">
+              <label for="seguridad">Seguridad al responder (%)</label>
+              <input id="seguridad" name="seguridad" type="number" min="0" max="100" [(ngModel)]="seguridad" required>
+              @if (intentoEnviar && seguridadInvalida) { <span class="error">Ingresa un porcentaje entre 0 y 100.</span> }
+            </div>
+            <div class="field full" [class.invalid]="intentoEnviar && !nivel">
+              <label for="nivel">Nivel de comunicación</label>
+              <select id="nivel" name="nivel" [(ngModel)]="nivel" required>
+                <option value="" disabled>Selecciona un nivel</option>
+                @for (n of niveles; track n) { <option [value]="n">{{ n }}</option> }
+              </select>
+              @if (intentoEnviar && !nivel) { <span class="error">Selecciona el nivel de comunicación.</span> }
+            </div>
+            <div class="field full" [class.invalid]="intentoEnviar && feedbackInvalido">
+              <label for="feedback">Retroalimentación para el candidato</label>
+              <textarea id="feedback" name="feedback" [(ngModel)]="feedback" required
+                        placeholder="Qué hizo bien y qué puede mejorar en su próxima práctica."></textarea>
+              <span class="hint">{{ feedback.trim().length }} caracteres · mínimo 20</span>
+              @if (intentoEnviar && feedbackInvalido) { <span class="error">Escribe al menos 20 caracteres de retroalimentación.</span> }
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" type="submit" [disabled]="enviando || respuestas.length === 0">{{ enviando ? 'Enviando…' : 'Enviar evaluación' }}</button>
+            <a class="btn ghost" routerLink="/evaluador/pendientes">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </div>
+  }
+</app-panel-rol-layout>

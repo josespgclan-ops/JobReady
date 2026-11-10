@@ -5,15 +5,23 @@
   </header>
   <div class="main-layout">
     <aside class="sidebar">
+      <!-- El menú es el mismo en todas las pantallas del candidato y sigue el orden del flujo de práctica. -->
       <nav class="sidebar-nav" aria-label="Menú del candidato">
-        <a routerLink="/panel" class="sidebar-link" [class.active-link]="active === 'panel'"><span aria-hidden="true">⌂</span> Inicio</a>
-        <a routerLink="/entrevista" class="sidebar-link" [class.active-link]="active === 'entrevista'"><span aria-hidden="true">●</span> Iniciar prueba</a>
-        <a routerLink="/historial" class="sidebar-link" [class.active-link]="active === 'historial'"><span aria-hidden="true">↗</span> Historial</a>
-        <a routerLink="/comparaciones" class="sidebar-link" [class.active-link]="active === 'comparaciones'"><span aria-hidden="true">⇄</span> Comparaciones</a>
-        <a routerLink="/resultados" class="sidebar-link" [class.active-link]="active === 'resultados'"><span aria-hidden="true">▥</span> Resultados</a>
-        <a routerLink="/organizar" class="sidebar-link" [class.active-link]="active === 'organizar'"><span aria-hidden="true">▦</span> Organizar sesión</a>
-        <a routerLink="/carreras" class="sidebar-link" [class.active-link]="active === 'carreras'"><span aria-hidden="true">▣</span> Carreras</a>
-        <a routerLink="/satisfaccion" class="sidebar-link" [class.active-link]="active === 'satisfaccion'"><span aria-hidden="true">☆</span> Opinión</a>
+        <a routerLink="/panel" class="sidebar-link" [class.active-link]="active === 'panel'" [attr.aria-current]="active === 'panel' ? 'page' : null"><span aria-hidden="true">⌂</span> Inicio</a>
+
+        <p class="sidebar-group">Prepárate</p>
+        <a routerLink="/carreras" class="sidebar-link" [class.active-link]="active === 'carreras'" [attr.aria-current]="active === 'carreras' ? 'page' : null"><span aria-hidden="true">▣</span> Carreras</a>
+        <a routerLink="/preguntas" class="sidebar-link" [class.active-link]="active === 'preguntas'" [attr.aria-current]="active === 'preguntas' ? 'page' : null"><span aria-hidden="true">?</span> Banco de preguntas</a>
+        <a routerLink="/entrevista" class="sidebar-link" [class.active-link]="active === 'entrevista'" [attr.aria-current]="active === 'entrevista' ? 'page' : null"><span aria-hidden="true">●</span> Iniciar prueba</a>
+
+        <p class="sidebar-group">Tu progreso</p>
+        <a routerLink="/historial" class="sidebar-link" [class.active-link]="active === 'historial'" [attr.aria-current]="active === 'historial' ? 'page' : null"><span aria-hidden="true">↗</span> Historial</a>
+        <a routerLink="/resultados" class="sidebar-link" [class.active-link]="active === 'resultados'" [attr.aria-current]="active === 'resultados' ? 'page' : null"><span aria-hidden="true">▥</span> Resultados</a>
+        <a routerLink="/comparaciones" class="sidebar-link" [class.active-link]="active === 'comparaciones'" [attr.aria-current]="active === 'comparaciones' ? 'page' : null"><span aria-hidden="true">⇄</span> Comparaciones</a>
+
+        <p class="sidebar-group">Más</p>
+        <a routerLink="/organizar" class="sidebar-link" [class.active-link]="active === 'organizar'" [attr.aria-current]="active === 'organizar' ? 'page' : null"><span aria-hidden="true">▦</span> Organizar sesión</a>
+        <a routerLink="/satisfaccion" class="sidebar-link" [class.active-link]="active === 'satisfaccion'" [attr.aria-current]="active === 'satisfaccion' ? 'page' : null"><span aria-hidden="true">☆</span> Opinión</a>
       </nav>
     </aside>
     <main class="content-area"><ng-content /></main>

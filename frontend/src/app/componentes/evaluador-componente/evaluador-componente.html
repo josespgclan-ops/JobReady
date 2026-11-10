@@ -1,8 +1,21 @@
-<app-panel-rol-layout rol="Evaluador">
-  <div class="heading"><span>Panel del evaluador</span><h1>Revisa las prácticas asignadas</h1><p>Este espacio reunirá las respuestas en video, notas temporizadas y rúbricas de evaluación.</p></div>
+<app-panel-rol-layout active="panel">
+  <div class="heading">
+    <span class="tag">Panel del evaluador</span>
+    <h1>Revisa las prácticas de los candidatos</h1>
+    <p>Toma una práctica pendiente, lee las respuestas del candidato y registra tu evaluación con la rúbrica.</p>
+  </div>
+
+  @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
+
+  <div class="stats" aria-live="polite">
+    <div class="stat" [class.alert]="pendientes > 0"><strong>{{ cargando ? '…' : pendientes }}</strong><span>Prácticas por evaluar</span></div>
+    <div class="stat"><strong>{{ cargando ? '…' : realizadas }}</strong><span>Evaluaciones realizadas</span></div>
+    <div class="stat"><strong>{{ cargando ? '…' : (promedio === null ? '—' : (promedio | number: '1.0-1')) }}</strong><span>Puntaje promedio que otorgaste</span></div>
+  </div>
+
   <div class="cards">
-    <article class="card"><span class="card-icon" aria-hidden="true">▤</span><h2>Banco de preguntas</h2><p>Consulta las preguntas disponibles para orientar la evaluación.</p><a routerLink="/preguntas">Ver preguntas →</a></article>
-    <article class="card muted"><span class="card-icon" aria-hidden="true">◷</span><h2>Cola de revisión</h2><p>La asignación exclusiva de una simulación necesita un endpoint que impida que dos evaluadores la tomen al mismo tiempo.</p><span class="status">Pendiente de integración</span></article>
-    <article class="card muted"><span class="card-icon" aria-hidden="true">◫</span><h2>Evaluaciones realizadas</h2><p>El historial por especialista y los borradores requieren consultas y estados específicos en el backend.</p><span class="status">Pendiente de integración</span></article>
+    <article class="card"><h2>1. Pendientes de evaluar</h2><p>Prácticas terminadas que todavía esperan tu retroalimentación.</p><a routerLink="/evaluador/pendientes">Ver la cola →</a></article>
+    <article class="card"><h2>2. Evaluar</h2><p>Revisa cada respuesta y califica comunicación, seguridad y contenido.</p><a routerLink="/evaluador/pendientes">Elegir una práctica →</a></article>
+    <article class="card"><h2>3. Mis evaluaciones</h2><p>Consulta el historial de las evaluaciones que ya registraste.</p><a routerLink="/evaluador/evaluaciones">Ver historial →</a></article>
   </div>
 </app-panel-rol-layout>

@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../servicios/auth-service';
 
 @Component({
   selector: 'app-home-componente',
@@ -9,6 +10,8 @@ import { RouterLink } from '@angular/router';
 })
 export class HomeComponente implements AfterViewInit, OnDestroy {
   menuAbierto = false;
+  /** Si el usuario ya inició sesión, la cabecera ofrece volver a su panel en vez de ingresar o registrarse. */
+  protected readonly tieneSesion = inject(AuthService).estaAutenticado();
   private observador?: IntersectionObserver;
 
   constructor(private elemento: ElementRef<HTMLElement>) {}

@@ -1,11 +1,13 @@
 package com.jobready.web.controladores;
 
+import com.jobready.web.dtos.ResultadoSimulacionDTO;
 import com.jobready.web.entidades.EvaluacionSimulacion;
 import com.jobready.web.dtos.EvaluacionSimulacionDTO;
 import com.jobready.web.servicios.EvaluacionSimulacionServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @RestController
@@ -16,12 +18,13 @@ public class EvaluacionSimulacionController {
 
     @PostMapping("/evaluacion-simulacion")
     @PreAuthorize("hasRole('EVALUADOR')")
-    public EvaluacionSimulacion insertar(@RequestBody EvaluacionSimulacionDTO evaluacionSimulacionDTO) {
-        return evaluacionSimulacionServicio.insertar(evaluacionSimulacionDTO.convertirAEntidad());
+    public EvaluacionSimulacion insertar(@RequestBody EvaluacionSimulacionDTO evaluacionSimulacionDTO,
+                                         Authentication authentication) {
+        return evaluacionSimulacionServicio.registrarComoEspecialista(evaluacionSimulacionDTO.convertirAEntidad(), authentication.getName());
     }
 
     @GetMapping("/evaluaciones-simulacion")
-    @PreAuthorize("hasAnyRole('ADMIN', 'CANDIDATO', 'EVALUADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EVALUADOR')") // el candidato usa /resultado/{idSimulacion}
     public List<EvaluacionSimulacion> listar() {
         return evaluacionSimulacionServicio.listar();
     }
@@ -29,13 +32,31 @@ public class EvaluacionSimulacionController {
     @PutMapping("/evaluacion-simulacion/{id}")
     @PreAuthorize("hasRole('EVALUADOR')")
     public EvaluacionSimulacion actualizar(@PathVariable Integer id,
-                                           @RequestBody EvaluacionSimulacionDTO evaluacionSimulacionDTO) {
-        return evaluacionSimulacionServicio.actualizar(id, evaluacionSimulacionDTO.convertirAEntidad());
+                                           @RequestBody EvaluacionSimulacionDTO evaluacionSimulacionDTO,
+                                           Authentication authentication) {
+        return evaluacionSimulacionServicio.actualizarPropia(id, evaluacionSimulacionDTO.convertirAEntidad(), authentication.getName());
     }
 
     @DeleteMapping("/evaluacion-simulacion/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'EVALUADOR')")
-    public void eliminar(@PathVariable Integer id) {
-        evaluacionSimulacionServicio.eliminar(id);
+    public void eliminar(@PathVariable Integer id, Authentication authentication) {
+        boolean esAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        evaluacionSimulacionServicio.eliminar(id, esAdmin ? null : authentication.getName());
     }
+
+    /** US21: evaluaciones registradas por el evaluador que inició sesión. */
+    @GetMapping("/evaluaciones-simulacion/mias")
+    @PreAuthorize("hasRole('EVALUADOR')")
+    public List<EvaluacionSimulacion> listarMias(Authentication authentication) {
+        return evaluacionSimulacionServicio.listarPorEspecialista(authentication.getName());
+    }
+
+    @GetMapping("/resultado/{idSimulacion}")
+    @PreAuthorize("hasRole('CANDIDATO')")
+    public ResultadoSimulacionDTO obtenerResultado(@PathVariable Integer idSimulacion,
+                                                   Authentication authentication) {
+        return evaluacionSimulacionServicio.obtenerResultado(idSimulacion, authentication.getName());
+    }
+
 }

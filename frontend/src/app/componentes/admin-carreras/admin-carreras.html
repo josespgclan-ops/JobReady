@@ -1,0 +1,61 @@
+<app-panel-rol-layout active="carreras">
+  <div class="heading">
+    <span class="tag">Contenidos</span>
+    <h1>Carreras</h1>
+    <p>Las carreras agrupan el banco de preguntas. Solo las activas aparecen a los candidatos.</p>
+  </div>
+
+  @if (mensaje) { <p class="notice ok" role="status">✓ {{ mensaje }}</p> }
+  @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
+
+  <section class="box" id="form-carrera" aria-labelledby="titulo-form-carrera">
+    <h2 class="box-title" id="titulo-form-carrera">{{ editandoId ? 'Editar carrera' : 'Nueva carrera' }}</h2>
+    <form class="box-body" (ngSubmit)="guardar()" novalidate>
+      <div class="form-grid">
+        <div class="field" [class.invalid]="intentoGuardar && (nombreInvalido || nombreRepetido)">
+          <label for="c-nombre">Nombre</label>
+          <input id="c-nombre" name="nombre" [(ngModel)]="formulario.nombre" required placeholder="Ej.: Desarrollo Frontend">
+          @if (intentoGuardar && nombreRepetido) { <span class="error">Ya existe una carrera con ese nombre.</span> }
+          @else if (intentoGuardar && nombreInvalido) { <span class="error">Escribe al menos 3 caracteres.</span> }
+        </div>
+        <div class="field full">
+          <label for="c-descripcion">Descripción</label>
+          <textarea id="c-descripcion" name="descripcion" [(ngModel)]="formulario.descripcion" placeholder="Qué tipo de puestos cubre esta carrera."></textarea>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" type="submit" [disabled]="guardando">{{ guardando ? 'Guardando…' : (editandoId ? 'Guardar cambios' : 'Registrar carrera') }}</button>
+        @if (editandoId) { <button class="btn ghost" type="button" (click)="cancelarEdicion()">Cancelar</button> }
+      </div>
+    </form>
+  </section>
+
+  <section class="box" aria-labelledby="titulo-lista-carreras">
+    <h2 class="box-title" id="titulo-lista-carreras">Catálogo ({{ carrerasFiltradas.length }})</h2>
+    <div class="box-body"><div class="filters"><div class="field"><label for="c-buscar">Buscar</label><input id="c-buscar" type="search" [(ngModel)]="busqueda" placeholder="Nombre de la carrera"></div></div></div>
+    @if (cargando) {
+      <p class="empty" role="status">Cargando carreras…</p>
+    } @else if (carrerasFiltradas.length === 0) {
+      <p class="empty">No hay carreras con ese nombre.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Carrera</th><th>Descripción</th><th>Estado</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+          <tbody>
+            @for (c of carrerasFiltradas; track c.idCarrera) {
+              <tr>
+                <td><strong>{{ c.nombre }}</strong></td>
+                <td class="muted">{{ c.descripcion || '—' }}</td>
+                <td>@if (c.activo !== false) { <span class="badge">Activa</span> } @else { <span class="badge off">Inactiva</span> }</td>
+                <td class="row-actions">
+                  <button class="btn ghost small" type="button" (click)="editar(c)">Editar</button>
+                  <button class="btn small" [class.danger]="c.activo !== false" [class.ghost]="c.activo === false" type="button" (click)="cambiarEstado(c)">{{ c.activo !== false ? 'Desactivar' : 'Reactivar' }}</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</app-panel-rol-layout>

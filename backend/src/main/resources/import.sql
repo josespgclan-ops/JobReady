@@ -296,3 +296,42 @@ WHERE c.username = 'candidato'
       FROM evaluaciones_simulacion ev
       WHERE ev.id_simulacion = s.id_simulacion
   );
+
+-- Practica finalizada SIN evaluacion: alimenta la cola "Pendientes de evaluar" del evaluador (US15)
+-- y el reporte de revisiones pendientes del administrador (US24).
+INSERT INTO simulaciones
+    (id_usuario, id_carrera, numero_simulacion, fecha_inicio, fecha_fin,
+     duracion_segundos, estado)
+SELECT u.id_usuario, c.id_carrera, 1,
+       CURRENT_TIMESTAMP - INTERVAL '40 minutes',
+       CURRENT_TIMESTAMP - INTERVAL '32 minutes',
+       480, 'finalizada'
+FROM usuarios u
+CROSS JOIN carreras c
+WHERE u.username = 'candidato'
+  AND c.nombre = 'Construccion e Ingenieria Civil'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM simulaciones s
+      WHERE s.id_usuario = u.id_usuario
+        AND s.id_carrera = c.id_carrera
+        AND s.numero_simulacion = 1
+  );
+
+INSERT INTO respuestas_entrevista
+    (id_simulacion, id_pregunta, texto_respuesta, duracion_segundos,
+     fecha_respuesta, estado)
+SELECT s.id_simulacion, p.id_pregunta,
+       'Revisaria los planos y el cronograma con el equipo, identificaria el riesgo principal y propondria una solucion medible para no retrasar la obra.',
+       100, CURRENT_TIMESTAMP - INTERVAL '35 minutes', 'enviada'
+FROM simulaciones s
+JOIN usuarios u ON u.id_usuario = s.id_usuario
+JOIN carreras c ON c.id_carrera = s.id_carrera
+JOIN LATERAL (
+    SELECT id_pregunta FROM preguntas_entrevista
+    WHERE id_carrera = c.id_carrera ORDER BY id_pregunta LIMIT 2
+) p ON TRUE
+WHERE u.username = 'candidato'
+  AND c.nombre = 'Construccion e Ingenieria Civil'
+  AND s.numero_simulacion = 1
+ON CONFLICT (id_simulacion, id_pregunta) DO NOTHING;

@@ -2,8 +2,10 @@
   <section class="welcome-banner" aria-labelledby="panel-title"><span class="banner-eyebrow">TU ESPACIO DE PRÁCTICA</span><h1 id="panel-title">Prepárate para tu próxima entrevista</h1><p>Elige una carrera, revisa preguntas y sigue tus prácticas desde un mismo lugar.</p></section>
   <div class="welcome-row"><h2>Hola, bienvenido a JobReady</h2><a routerLink="/carreras" class="primary-link">Explorar carreras</a></div>
   <div class="panel-grid">
-    <article class="content-card action-card"><span class="action-icon">◉</span><h3>Iniciar prueba</h3><p>Prepara tu cámara y micrófono para una entrevista de práctica.</p><a routerLink="/entrevista" class="secondary-link">Ir a la cabina →</a></article>
-    <article class="content-card action-card"><span class="action-icon">▤</span><h3>Banco de preguntas</h3><p>Explora las preguntas que se encuentran activas para tu carrera.</p><a routerLink="/preguntas" class="secondary-link">Ver preguntas →</a></article>
-    <article class="content-card action-card"><span class="action-icon">↗</span><h3>Tu progreso</h3><p>Las puntuaciones aparecerán cuando se publique una evaluación de tus prácticas.</p><a routerLink="/historial" class="secondary-link">Ver historial →</a></article>
+    <!-- Las tarjetas siguen el mismo orden que el menú: carrera → preguntas → prueba → progreso. -->
+    <article class="content-card action-card"><span class="action-icon">▣</span><h3>1. Elige tu carrera</h3><p>Selecciona la especialidad para la que quieres practicar.</p><a routerLink="/carreras" class="secondary-link">Ver carreras →</a></article>
+    <article class="content-card action-card"><span class="action-icon">▤</span><h3>2. Banco de preguntas</h3><p>Explora las preguntas que se encuentran activas para tu carrera.</p><a routerLink="/preguntas" class="secondary-link">Ver preguntas →</a></article>
+    <article class="content-card action-card"><span class="action-icon">◉</span><h3>3. Iniciar prueba</h3><p>Prepara tu cámara y micrófono para una entrevista de práctica.</p><a routerLink="/entrevista" class="secondary-link">Ir a la cabina →</a></article>
+    <article class="content-card action-card"><span class="action-icon">↗</span><h3>Tu progreso</h3><p>Revisa tus prácticas y los informes publicados por los evaluadores.</p><a routerLink="/historial" class="secondary-link">Ver historial →</a></article>
   </div>
 </app-candidato-layout>

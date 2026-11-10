@@ -20,6 +20,14 @@ public class SimulacionServicio implements Serializable {
         return simulacionRepositorio.findAll();
     }
 
+    public List<Simulacion> listarPendientesDeEvaluacion() {
+        return simulacionRepositorio.findPendientesDeEvaluacion();
+    }
+
+    public List<Simulacion> listarPorUsuario(String username) {
+        return simulacionRepositorio.findByUsuario_UsernameOrderByFechaInicioDesc(username);
+    }
+
     public Simulacion actualizar(Integer id, Simulacion datos) {
         Simulacion simulacion = simulacionRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("No existe la simulacion con id " + id));

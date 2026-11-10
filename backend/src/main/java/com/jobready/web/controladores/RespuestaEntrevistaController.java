@@ -21,13 +21,13 @@ public class RespuestaEntrevistaController {
     }
 
     @GetMapping("/respuestas-entrevista")
-    @PreAuthorize("hasAnyRole('ADMIN', 'CANDIDATO', 'EVALUADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EVALUADOR')")
     public List<RespuestaEntrevista> listar() {
         return respuestaEntrevistaServicio.listar();
     }
 
     @GetMapping("/respuestas-entrevista/simulacion/{idSimulacion}")
-    @PreAuthorize("hasAnyRole('CANDIDATO', 'EVALUADOR')")
+    @PreAuthorize("hasRole('EVALUADOR')")
     public List<RespuestaEntrevista> listarPorSimulacion(@PathVariable Integer idSimulacion) {
         return respuestaEntrevistaServicio.listarPorSimulacion(idSimulacion);
     }

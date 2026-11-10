@@ -1,11 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PreguntasServicio } from '../../servicios/preguntas-servicio';
 import { AuthService } from '../../servicios/auth-service';
 import { PreguntaEntrevista } from '../../modelos/api-modelos';
 import { Carrera } from '../../modelos/api-modelos';
 import { CarrerasServicio } from '../../servicios/carreras-servicio';
+import { CandidatoLayoutComponente } from '../candidato-layout/candidato-layout';
+import { PanelRolLayout } from '../panel-rol-layout/panel-rol-layout';
 
 interface PreguntaMuestra {
   categoria: string;
@@ -15,7 +18,9 @@ interface PreguntaMuestra {
 
 @Component({
   selector: 'app-preguntas-componente',
-  imports: [FormsModule, RouterLink],
+  // Angular 22 usa OnPush por defecto; esta vista cambia al llegar datos de la API.
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [FormsModule, RouterLink, NgTemplateOutlet, CandidatoLayoutComponente, PanelRolLayout],
   templateUrl: './preguntas-componente.html',
   styleUrl: './preguntas-componente.css',
 })
@@ -26,19 +31,19 @@ export class PreguntasComponente implements OnInit {
   private readonly route = inject(ActivatedRoute);
   protected preguntas: PreguntaMuestra[] = [
     {
-      categoria: 'T?cnica',
+      categoria: 'Técnica',
       dificultad: 'Intermedio',
       texto: 'Describe un proyecto de software en el que resolviste un problema complejo.',
     },
     {
-      categoria: 'Comunicaci?n',
-      dificultad: 'B?sico',
-      texto: '?C?mo priorizas tareas cuando tienes varias entregas con plazos cercanos?',
+      categoria: 'Comunicación',
+      dificultad: 'Básico',
+      texto: '¿Cómo priorizas tareas cuando tienes varias entregas con plazos cercanos?',
     },
     {
       categoria: 'Experiencia',
       dificultad: 'Intermedio',
-      texto: 'Describe un reto relacionado con tu carrera y c?mo lo resolver?as.',
+      texto: 'Describe un reto relacionado con tu carrera y cómo lo resolverías.',
     },
   ];
   protected cargando = false;
@@ -47,12 +52,25 @@ export class PreguntasComponente implements OnInit {
   protected carreras: Carrera[] = [];
   protected carreraSeleccionada = '';
 
+  /** Qué marco usar: el menú del candidato, el panel del evaluador/admin o la página pública. */
+  protected vista: 'candidato' | 'panel' | 'publica' = 'publica';
+  protected nombreRol = '';
+
   ngOnInit(): void {
     const carrera = this.route.snapshot.queryParamMap.get('carrera');
     if (carrera && /^\d+$/.test(carrera)) this.carreraSeleccionada = carrera;
     this.tieneSesion = this.authService.estaAutenticado();
+    const roles = this.authService.obtenerRoles();
+    if (this.tieneSesion && roles.includes('ROLE_CANDIDATO')) {
+      this.vista = 'candidato';
+    } else if (this.tieneSesion && (roles.includes('ROLE_EVALUADOR') || roles.includes('ROLE_ADMIN'))) {
+      this.vista = 'panel';
+      this.nombreRol = roles.includes('ROLE_ADMIN') ? 'Administración' : 'Evaluador';
+    }
     if (!this.tieneSesion) return;
 
+    // Con sesión no se muestran las preguntas de ejemplo: se espera a las reales del backend.
+    this.preguntas = [];
     this.cargando = true;
     this.carrerasServicio.listar().subscribe({
       next: (carreras) => this.carreras = carreras,
@@ -73,7 +91,8 @@ export class PreguntasComponente implements OnInit {
       : this.preguntasServicio.listar();
     solicitud.subscribe({
       next: (preguntas) => {
-        this.preguntas = preguntas.map((pregunta: PreguntaEntrevista) => ({
+        // US23: las preguntas desactivadas por el administrador ya no se muestran.
+        this.preguntas = preguntas.filter((pregunta) => pregunta.activo !== false).map((pregunta: PreguntaEntrevista) => ({
           categoria: pregunta.categoria ?? 'General',
           dificultad: pregunta.nivelDificultad ?? 'Sin nivel',
           texto: pregunta.textoPregunta,

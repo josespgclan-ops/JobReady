@@ -1,29 +1,50 @@
-<main class="questions-page">
-  <header class="questions-header">
-    <a class="brand" routerLink="/" aria-label="Volver a JobReady">
-      <span class="brand-mark">JR</span>
-      <span>Job<span>Ready</span></span>
-    </a>
-    <a class="back-link" routerLink="/">Volver al inicio</a>
-  </header>
+<!--
+  La misma página se muestra en tres "marcos" distintos según quién la abre:
+  - Candidato: dentro de su menú lateral (no sale de su espacio).
+  - Evaluador o administrador: dentro de su panel.
+  - Visitante sin sesión: como página pública con preguntas de ejemplo.
+-->
+@switch (vista) {
+  @case ('candidato') {
+    <app-candidato-layout active="preguntas">
+      <ng-container [ngTemplateOutlet]="contenido" />
+    </app-candidato-layout>
+  }
+  @case ('panel') {
+    <app-panel-rol-layout [rol]="nombreRol" active="preguntas">
+      <ng-container [ngTemplateOutlet]="contenido" />
+    </app-panel-rol-layout>
+  }
+  @default {
+    <main class="questions-page">
+      <header class="questions-header">
+        <a class="brand" routerLink="/" aria-label="JobReady, ir al inicio">
+          <span class="brand-mark">JR</span>
+          <span>Job<span>Ready</span></span>
+        </a>
+        <a class="back-link" routerLink="/">Volver al inicio</a>
+      </header>
+      <div class="questions-public">
+        <ng-container [ngTemplateOutlet]="contenido" />
+        <a class="home-button" routerLink="/">Regresar a JobReady</a>
+      </div>
+    </main>
+  }
+}
 
+<ng-template #contenido>
   <section class="questions-content" aria-labelledby="questions-title">
-    <p class="eyebrow">TU PR?XIMO PASO</p>
+    <p class="eyebrow">{{ vista === 'candidato' ? 'PREPÁRATE · PASO 2 DE 3' : 'TU PRÓXIMO PASO' }}</p>
     <h1 id="questions-title">Banco de preguntas</h1>
-    <p class="intro">
-      Explora preguntas de pr?ctica para preparar tus respuestas antes de una entrevista.
-    </p>
+    <p class="intro">Explora preguntas de práctica para preparar tus respuestas antes de una entrevista.</p>
 
     @if (!tieneSesion) {
-    <div class="preview-note" role="note">
-      <span aria-hidden="true">?</span>
-      <p>Vista de avance: inicia sesi?n para cargar preguntas del backend. Mientras tanto, aqu? ves ejemplos de la interfaz.</p>
-    </div>
-    <a class="home-button" routerLink="/ingresar">Iniciar sesi?n</a>
+      <div class="preview-note" role="note">
+        <span aria-hidden="true">ℹ</span>
+        <p>Estas son preguntas de ejemplo. Inicia sesión para ver el banco completo de preguntas por carrera.</p>
+      </div>
+      <a class="home-button" routerLink="/ingresar">Iniciar sesión</a>
     }
-
-    @if (cargando) { <p role="status">Cargando preguntas?</p> }
-    @if (mensaje) { <p class="preview-note" role="status">{{ mensaje }}</p> }
 
     @if (tieneSesion && carreras.length) {
       <label class="career-filter" for="career-filter">Filtrar por carrera</label>
@@ -35,19 +56,30 @@
       </select>
     }
 
+    @if (cargando) { <p role="status">Cargando preguntas…</p> }
+    @if (mensaje) { <p class="preview-note" role="status">{{ mensaje }}</p> }
+    @if (tieneSesion && !cargando && !mensaje && preguntas.length === 0) {
+      <p class="preview-note" role="status">No hay preguntas activas para esta carrera todavía.</p>
+    }
+
     <div class="question-list">
-      @for (pregunta of preguntas; track pregunta.texto) {
+      @for (pregunta of preguntas; track $index) {
         <article class="question-card">
           <div class="question-tags">
             <span class="tag">{{ pregunta.categoria }}</span>
             <span class="difficulty">{{ pregunta.dificultad }}</span>
           </div>
           <h2>{{ pregunta.texto }}</h2>
-          <p>Piensa en un ejemplo concreto y explica qu? hiciste y cu?l fue el resultado.</p>
+          <p>Piensa en un ejemplo concreto y explica qué hiciste y cuál fue el resultado.</p>
         </article>
       }
     </div>
 
-    <a class="home-button" routerLink="/">Regresar a JobReady</a>
+    @if (vista === 'candidato') {
+      <div class="next-step">
+        <p>¿Listo para responder en video?</p>
+        <a class="home-button" routerLink="/entrevista">Siguiente: iniciar prueba →</a>
+      </div>
+    }
   </section>
-</main>
+</ng-template>
