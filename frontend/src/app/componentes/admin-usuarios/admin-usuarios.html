@@ -1,0 +1,54 @@
+<app-panel-rol-layout active="usuarios">
+  <div class="heading">
+    <span class="tag">Moderación</span>
+    <h1>Usuarios</h1>
+    <p>Suspende las cuentas que hagan un mal uso de la plataforma y reactívalas cuando corresponda.</p>
+  </div>
+
+  @if (mensaje) { <p class="notice ok" role="status">✓ {{ mensaje }}</p> }
+  @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
+
+  <section class="box" aria-labelledby="titulo-usuarios">
+    <h2 class="box-title" id="titulo-usuarios">Cuentas registradas ({{ usuariosFiltrados.length }})</h2>
+    <div class="box-body">
+      <div class="filters">
+        <div class="field"><label for="u-buscar">Buscar</label><input id="u-buscar" type="search" [(ngModel)]="busqueda" placeholder="Nombre, usuario o correo"></div>
+        <div class="field"><label for="u-rol">Rol</label>
+          <select id="u-rol" [(ngModel)]="filtroRol"><option value="">Todos</option><option value="CANDIDATO">Candidatos</option><option value="EVALUADOR">Evaluadores</option><option value="ADMIN">Administradores</option></select></div>
+        <div class="field"><label for="u-estado">Estado</label>
+          <select id="u-estado" [(ngModel)]="filtroEstado"><option value="">Todos</option><option value="activo">Activas</option><option value="inactivo">Suspendidas</option></select></div>
+      </div>
+    </div>
+    @if (cargando) {
+      <p class="empty" role="status">Cargando usuarios…</p>
+    } @else if (usuariosFiltrados.length === 0) {
+      <p class="empty">No hay cuentas con esos filtros.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Registro</th><th>Estado</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+          <tbody>
+            @for (u of usuariosFiltrados; track u.idUsuario) {
+              <tr>
+                <td><strong>{{ u.nombreCompleto }}</strong><br><span class="muted">&#64;{{ u.username }}</span></td>
+                <td>{{ u.email }}</td>
+                <td>{{ textoRol(u) }}</td>
+                <td>{{ u.fechaRegistro | date: 'dd/MM/yyyy' }}</td>
+                <td>@if (estado(u) === 'activo') { <span class="badge">Activa</span> } @else { <span class="badge off">Suspendida</span> }</td>
+                <td class="row-actions">
+                  @if (u.rol?.nombre === 'ADMIN') {
+                    <span class="muted">—</span>
+                  } @else if (estado(u) === 'activo') {
+                    <button class="btn danger small" type="button" [disabled]="procesandoId === u.idUsuario" (click)="suspender(u)">Suspender</button>
+                  } @else {
+                    <button class="btn ghost small" type="button" [disabled]="procesandoId === u.idUsuario" (click)="reactivar(u)">Reactivar</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</app-panel-rol-layout>

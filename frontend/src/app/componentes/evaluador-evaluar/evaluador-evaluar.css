@@ -1,0 +1,7 @@
+.back{margin-bottom:18px}
+.evaluate-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,1fr);gap:20px;align-items:start}
+.answers{display:grid;gap:16px}
+.answer{padding:16px;border:1px solid #e3e9f0;border-radius:12px;background:#fbfcfe}
+.answer h3{margin:4px 0 8px;font:800 1rem/1.4 Arial,sans-serif;color:#172433}
+.answer-text{margin:0;line-height:1.6;color:#334458}
+@media(max-width:1000px){.evaluate-grid{grid-template-columns:1fr}}

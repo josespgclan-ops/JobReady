@@ -2,7 +2,35 @@
   <h1 class="page-title">Historial de prácticas</h1>
   <p class="page-intro">Aquí podrás seguir tus entrevistas y consultar los informes publicados por evaluadores.</p>
   <section class="content-card" aria-label="Historial de simulaciones">
-    <div class="history-header"><span>Simulación</span><span>Estado</span><span>Grabación</span><span>Informe</span></div>
-    <div class="empty-state"><span class="empty-icon" aria-hidden="true">↗</span><h2>Aún no hay prácticas para mostrar</h2><p>Tu historial estará disponible cuando las simulaciones se vinculen de forma segura a tu cuenta.</p><a routerLink="/entrevista" class="primary-link">Preparar una práctica</a></div>
+    <div class="history-header" aria-hidden="true"><span>Simulación</span><span>Estado</span><span>Duración</span><span>Informe</span></div>
+
+    @if (cargando) {
+      <p class="history-status" role="status">Cargando tu historial…</p>
+    } @else if (error) {
+      <p class="history-status" role="alert">{{ error }}</p>
+    } @else if (simulaciones.length === 0) {
+      <div class="empty-state"><span class="empty-icon" aria-hidden="true">↗</span><h2>Aún no hay prácticas para mostrar</h2><p>Cuando completes una práctica, aparecerá aquí junto con su informe.</p><a routerLink="/entrevista" class="primary-link">Preparar una práctica</a></div>
+    } @else {
+      <ul class="history-list">
+        @for (simulacion of simulaciones; track simulacion.idSimulacion) {
+          <li class="history-row">
+            <span class="history-name">
+              <strong>{{ simulacion.carrera?.nombre ?? 'Simulación' }}</strong>
+              <small>{{ simulacion.fechaInicio | date: 'dd/MM/yyyy HH:mm' }}</small>
+            </span>
+            <span class="history-state" [class.done]="estaFinalizada(simulacion)">{{ textoEstado(simulacion) }}</span>
+            <span class="history-cell">{{ duracion(simulacion) }}</span>
+            <span class="history-cell">
+              @if (estaFinalizada(simulacion)) {
+                <a class="secondary-link" routerLink="/resultados" [queryParams]="{ idSimulacion: simulacion.idSimulacion }"
+                   [attr.aria-label]="'Ver informe de ' + (simulacion.carrera?.nombre ?? 'la simulación')">Ver informe</a>
+              } @else {
+                <span class="muted">Pendiente</span>
+              }
+            </span>
+          </li>
+        }
+      </ul>
+    }
   </section>
 </app-candidato-layout>

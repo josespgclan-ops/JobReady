@@ -1,0 +1,34 @@
+<app-panel-rol-layout active="pendientes">
+  <div class="heading">
+    <span class="tag">Paso 1 · Cola de revisión</span>
+    <h1>Pendientes de evaluar</h1>
+    <p>Prácticas terminadas que todavía no tienen retroalimentación. Empieza por la más antigua.</p>
+  </div>
+
+  @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
+
+  <section class="box" aria-label="Prácticas pendientes">
+    @if (cargando) {
+      <p class="empty" role="status">Cargando prácticas…</p>
+    } @else if (pendientes.length === 0 && !error) {
+      <p class="empty">¡Todo al día! No hay prácticas esperando evaluación.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Candidato</th><th>Carrera</th><th>Terminó</th><th>Duración</th><th><span class="sr-only">Acción</span></th></tr></thead>
+          <tbody>
+            @for (s of pendientes; track s.idSimulacion) {
+              <tr>
+                <td><strong>{{ s.usuario?.nombreCompleto ?? 'Candidato' }}</strong><br><span class="muted">&#64;{{ s.usuario?.username }}</span></td>
+                <td>{{ s.carrera?.nombre }}</td>
+                <td>{{ s.fechaFin | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ s.duracionSegundos ? (s.duracionSegundos / 60).toFixed(0) + ' min' : '—' }}</td>
+                <td><a class="btn primary small" [routerLink]="['/evaluador/evaluar', s.idSimulacion]">Evaluar</a></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</app-panel-rol-layout>

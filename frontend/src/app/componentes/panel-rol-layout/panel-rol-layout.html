@@ -1,15 +1,21 @@
-<div class="panel-shell">
+<div class="panel-shell" [class.admin]="esAdmin">
   <header class="topbar">
-    <a routerLink="/" class="logo" aria-label="JobReady, inicio"><span>Job</span><strong>Ready</strong></a>
-    <div class="topbar-actions"><span class="role-tag">{{ rol }}</span><button type="button" (click)="cerrarSesion()">Cerrar sesión</button></div>
+    <a routerLink="/mi-panel" class="logo" aria-label="JobReady, mi panel"><span>Job</span><strong>Ready</strong></a>
+    <div class="topbar-actions"><span class="role-tag">{{ etiquetaRol }}</span><button type="button" (click)="cerrarSesion()">Cerrar sesión</button></div>
   </header>
   <div class="layout">
-    <aside class="sidebar" aria-label="Navegación del panel">
+    <aside class="sidebar" [attr.aria-label]="'Menú de ' + etiquetaRol">
+      <!-- Cada rol tiene su propio menú y es el mismo en todas sus pantallas. -->
+      <p class="sidebar-title">{{ esAdmin ? 'Administración' : 'Evaluación' }}</p>
       <nav>
-        <a routerLink="/preguntas">Banco de preguntas</a>
-        <a routerLink="/planes">Planes</a>
-        <a routerLink="/">Inicio público</a>
+        @for (opcion of menu; track opcion.clave) {
+          <a [routerLink]="opcion.ruta" [class.active]="active === opcion.clave"
+             [attr.aria-current]="active === opcion.clave ? 'page' : null">
+            <span aria-hidden="true">{{ opcion.icono }}</span>{{ opcion.texto }}
+          </a>
+        }
       </nav>
+      <a class="public-link" routerLink="/">Ver sitio público ↗</a>
     </aside>
     <main class="content"><ng-content></ng-content></main>
   </div>

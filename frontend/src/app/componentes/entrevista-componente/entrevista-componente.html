@@ -1,18 +1,6 @@
-<div class="interview-page">
-  <header class="topbar">
-    <a routerLink="/panel" class="logo"><span>Job</span><strong>Ready</strong></a>
-    <span class="topbar-label">Práctica de entrevista</span>
-  </header>
-  <div class="layout">
-    <nav class="sidebar" aria-label="Menú del candidato">
-      <a routerLink="/panel">Inicio</a>
-      <a routerLink="/entrevista" aria-current="page">Iniciar prueba</a>
-      <a routerLink="/preguntas">Banco de preguntas</a>
-      <a routerLink="/historial">Historial</a>
-      <a routerLink="/carreras">Carreras</a>
-    </nav>
-    <main class="content">
-      <div class="heading"><p class="eyebrow">PREPARACIÓN</p><h1>Ensaya tu entrevista</h1><p>Comprueba tus dispositivos y graba una respuesta de práctica.</p></div>
+<app-candidato-layout active="entrevista">
+  <div class="interview-content">
+      <div class="heading"><p class="eyebrow">PREPÁRATE · PASO 3 DE 3</p><h1>Ensaya tu entrevista</h1><p>Comprueba tus dispositivos y graba una respuesta de práctica.</p></div>
       <div class="practice-grid">
         <section class="video-card" aria-label="Vista previa de cámara">
           <video #vistaPrevia autoplay muted playsinline [hidden]="!preparado"></video>
@@ -37,6 +25,6 @@
       @if (videoGrabado) {
         <section class="result-card"><h2>Revisa tu grabación</h2><video [src]="videoGrabado" controls playsinline></video><button type="button" class="primary" (click)="descargarGrabacion()">Descargar video</button><p>La subida al backend está pendiente; este video permanece solo en tu navegador.</p></section>
       }
-    </main>
+    
   </div>
-</div>
+</app-candidato-layout>

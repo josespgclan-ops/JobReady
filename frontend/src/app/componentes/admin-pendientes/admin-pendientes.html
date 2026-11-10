@@ -1,0 +1,34 @@
+<app-panel-rol-layout active="revisiones">
+  <div class="heading">
+    <span class="tag">Reportes</span>
+    <h1>Revisiones pendientes</h1>
+    <p>Prácticas terminadas que todavía no tienen evaluación. La meta del proyecto es evaluarlas en menos de 48 horas.</p>
+  </div>
+
+  @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
+
+  <section class="box" aria-label="Prácticas sin evaluación">
+    @if (cargando) {
+      <p class="empty" role="status">Generando reporte…</p>
+    } @else if (pendientes.length === 0 && !error) {
+      <p class="empty">No hay prácticas esperando evaluación.</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Candidato</th><th>Carrera</th><th>Terminó</th><th>Tiempo de espera</th><th>Estado</th></tr></thead>
+          <tbody>
+            @for (s of pendientes; track s.idSimulacion) {
+              <tr>
+                <td><strong>{{ s.usuario?.nombreCompleto ?? '—' }}</strong><br><span class="muted">&#64;{{ s.usuario?.username }}</span></td>
+                <td>{{ s.carrera?.nombre }}</td>
+                <td>{{ s.fechaFin | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ horasEsperando(s) < 1 ? 'Menos de 1 hora' : horasEsperando(s) + ' h' }}</td>
+                <td>@if (retrasada(s)) { <span class="badge off">Retrasada (+48 h)</span> } @else { <span class="badge wait">En plazo</span> }</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</app-panel-rol-layout>
