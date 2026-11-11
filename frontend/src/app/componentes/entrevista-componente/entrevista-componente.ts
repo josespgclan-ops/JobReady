@@ -20,6 +20,7 @@ export class EntrevistaComponente implements OnInit, OnDestroy {
   private readonly simulacionesServicio = inject(SimulacionesServicio);
   private readonly route = inject(ActivatedRoute);
   @ViewChild('vistaPrevia') private vistaPrevia?: ElementRef<HTMLVideoElement>;
+  @ViewChild('confirmarFin') private dialogoConfirmar?: ElementRef<HTMLDialogElement>;
   private flujo?: MediaStream;
   private grabador?: MediaRecorder;
   private fragmentos: Blob[] = [];
@@ -37,6 +38,10 @@ export class EntrevistaComponente implements OnInit, OnDestroy {
   private duracionGrabada = 0;
   protected carreras: Carrera[] = [];
   protected idCarrera: number | null = null;
+  /** La grabación terminó y espera que el candidato confirme el fin de la simulación. */
+  protected confirmandoFin = false;
+  /** El candidato confirmó el fin de la simulación: ya puede revisar y enviar el video. */
+  protected finalizada = false;
   protected enviando = false;
   /** Una grabación enviada ya no puede reenviarse; se desbloquea al grabar otra. */
   protected enviado = false;
@@ -45,8 +50,16 @@ export class EntrevistaComponente implements OnInit, OnDestroy {
   protected mensaje = 'Comprueba tu cámara y micrófono antes de comenzar.';
 
   protected get tiempoRestante(): string {
-    const minutos = Math.floor(this.segundosRestantes / 60).toString().padStart(2, '0');
-    const segundos = (this.segundosRestantes % 60).toString().padStart(2, '0');
+    return this.formatearTiempo(this.segundosRestantes);
+  }
+
+  protected get duracionTexto(): string {
+    return this.formatearTiempo(this.duracionGrabada);
+  }
+
+  private formatearTiempo(totalSegundos: number): string {
+    const minutos = Math.floor(totalSegundos / 60).toString().padStart(2, '0');
+    const segundos = (totalSegundos % 60).toString().padStart(2, '0');
     return `${minutos}:${segundos}`;
   }
 
@@ -108,6 +121,8 @@ export class EntrevistaComponente implements OnInit, OnDestroy {
       this.videoGrabado = '';
     }
     this.blobGrabado = undefined;
+    this.confirmandoFin = false;
+    this.finalizada = false;
     this.enviado = false;
     this.mensajeEnvio = '';
     this.errorEnvio = '';
@@ -128,11 +143,11 @@ export class EntrevistaComponente implements OnInit, OnDestroy {
           this.blobGrabado = new Blob(this.fragmentos, { type: tipo });
           this.videoGrabado = URL.createObjectURL(this.blobGrabado);
           this.duracionGrabada = Math.min(180, Math.max(1, Math.round((Date.now() - this.inicioGrabacion) / 1000)));
-          this.mensaje = 'Grabación lista. Revísala y pulsa "Enviar" para que un evaluador la revise.';
+          this.mensaje = 'Grabación detenida. Confirma si deseas finalizar la simulación.';
+          this.abrirConfirmacion();
         } else {
-          this.mensaje = 'No se pudo guardar la grabación. Inténtalo de nuevo.';
+          this.mensaje = 'No se pudo guardar la grabación. Vuelve a comprobar la cámara e inténtalo de nuevo.';
         }
-        this.detenerDispositivos();
       };
       this.grabador.start();
       this.inicioGrabacion = Date.now();
@@ -147,11 +162,53 @@ export class EntrevistaComponente implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Detiene la grabación y apaga cámara y micrófono en el acto. MediaRecorder entrega los
+   * fragmentos ya capturados en su evento "stop", así que apagar las pistas aquí no pierde datos.
+   */
   protected detenerGrabacion(): void {
     if (!this.grabando) return;
     this.grabando = false;
     this.limpiarReloj();
-    if (this.grabador?.state === 'recording') this.grabador.stop();
+    if (this.grabador && this.grabador.state !== 'inactive') this.grabador.stop();
+    this.detenerDispositivos();
+    this.mensaje = 'Procesando la grabación…';
+  }
+
+  private abrirConfirmacion(): void {
+    this.confirmandoFin = true;
+    const dialogo = this.dialogoConfirmar?.nativeElement;
+    if (dialogo && !dialogo.open) dialogo.showModal();
+  }
+
+  private cerrarConfirmacion(): void {
+    this.confirmandoFin = false;
+    const dialogo = this.dialogoConfirmar?.nativeElement;
+    if (dialogo?.open) dialogo.close();
+  }
+
+  /** Esc no cierra la confirmación: el candidato debe elegir finalizar o descartar. */
+  protected impedirCierre(evento: Event): void {
+    evento.preventDefault();
+  }
+
+  protected confirmarFinalizacion(): void {
+    if (!this.blobGrabado) return;
+    this.cerrarConfirmacion();
+    this.finalizada = true;
+    this.mensaje = 'Simulación finalizada. Revisa tu grabación y pulsa "Enviar video" para que un evaluador la revise.';
+  }
+
+  /** Descarta la grabación sin enviarla; el candidato puede volver a comprobar la cámara y grabar otra. */
+  protected descartarGrabacion(): void {
+    this.cerrarConfirmacion();
+    if (this.videoGrabado) URL.revokeObjectURL(this.videoGrabado);
+    this.videoGrabado = '';
+    this.blobGrabado = undefined;
+    this.duracionGrabada = 0;
+    this.finalizada = false;
+    this.segundosRestantes = 180;
+    this.mensaje = 'Grabación descartada. Comprueba la cámara y el micrófono para grabar de nuevo.';
   }
 
   protected descargarGrabacion(): void {
@@ -163,11 +220,11 @@ export class EntrevistaComponente implements OnInit, OnDestroy {
   }
 
   protected get puedeEnviar(): boolean {
-    return !!this.blobGrabado && !!this.idCarrera && !this.enviando && !this.enviado && !this.grabando;
+    return this.finalizada && !!this.blobGrabado && !!this.idCarrera && !this.enviando && !this.enviado && !this.grabando;
   }
 
   protected enviarGrabacion(): void {
-    if (!this.blobGrabado || this.enviando || this.enviado) return;
+    if (!this.finalizada || !this.blobGrabado || this.enviando || this.enviado) return;
     if (!this.idCarrera) {
       this.errorEnvio = 'Selecciona la carrera de la entrevista antes de enviarla.';
       return;
@@ -210,6 +267,7 @@ export class EntrevistaComponente implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destruido = true;
+    this.cerrarConfirmacion();
     if (this.grabador?.state === 'recording') this.grabador.stop();
     this.limpiarReloj();
     this.detenerDispositivos();
