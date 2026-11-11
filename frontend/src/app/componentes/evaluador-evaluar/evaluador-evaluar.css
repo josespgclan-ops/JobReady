@@ -5,3 +5,4 @@
 .answer h3{margin:4px 0 8px;font:800 1rem/1.4 Arial,sans-serif;color:#172433}
 .answer-text{margin:0;line-height:1.6;color:#334458}
 @media(max-width:1000px){.evaluate-grid{grid-template-columns:1fr}}
+.candidate-video{display:block;width:100%;max-height:360px;background:#111;border-radius:10px}
