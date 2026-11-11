@@ -34,6 +34,10 @@ public class Simulacion {
     private Integer duracionSegundos;
     @Column(length = 20)
     private String estado;
+    /** Evaluador asignado al enviar la entrevista; null = cola compartida entre evaluadores. */
+    @ManyToOne
+    @JoinColumn(name = "id_evaluador")
+    private Usuario evaluador;
 }
 
 

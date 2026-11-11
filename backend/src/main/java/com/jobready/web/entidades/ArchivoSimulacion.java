@@ -1,5 +1,6 @@
 package com.jobready.web.entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -27,6 +28,10 @@ public class ArchivoSimulacion {
     private BigDecimal pesoMb;
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
+    /** SHA-256 del video enviado; único para impedir que la misma grabación se registre dos veces. */
+    @JsonIgnore
+    @Column(name = "hash_contenido", length = 64, unique = true)
+    private String hashContenido;
 }
 
 

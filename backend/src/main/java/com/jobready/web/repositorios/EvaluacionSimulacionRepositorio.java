@@ -11,6 +11,8 @@ public interface EvaluacionSimulacionRepositorio extends JpaRepository<Evaluacio
     EvaluacionSimulacion findBySimulacion_IdSimulacion(Integer idSimulacion);
 
     java.util.List<EvaluacionSimulacion> findByEspecialista_UsernameOrderByIdEvaluacionDesc(String username);
+
+    java.util.List<EvaluacionSimulacion> findBySimulacion_Usuario_Username(String username);
 }
 
 
