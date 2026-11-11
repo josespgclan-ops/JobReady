@@ -1,7 +1,7 @@
 <div class="candidate-app">
   <header class="topbar">
     <a routerLink="/panel" class="logo" aria-label="JobReady, panel principal"><span class="logo-job">Job</span><span class="logo-ready">Ready</span></a>
-    <div class="topbar-actions"><span class="profile-label">Mi espacio</span><button type="button" class="logout" (click)="cerrarSesion()">Cerrar sesión</button></div>
+    <div class="topbar-actions"><span class="profile-label">{{ nombreUsuario() ? 'Hola, ' + nombreUsuario() : 'Hola' }}</span><button type="button" class="logout" (click)="cerrarSesion()">Cerrar sesión</button></div>
   </header>
   <div class="main-layout">
     <aside class="sidebar">

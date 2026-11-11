@@ -1,5 +1,6 @@
 package com.jobready.web.servicios;
 
+import com.jobready.web.dtos.UsuarioActualDTO;
 import com.jobready.web.entidades.Usuario;
 import com.jobready.web.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,13 @@ public class UsuarioServicio implements Serializable {
 
     public List<Usuario> listar() {
         return usuarioRepositorio.findAll();
+    }
+
+    /** Datos públicos de la cuenta que inició sesión (para saludarla en la barra superior). */
+    public UsuarioActualDTO obtenerActual(String username) {
+        Usuario usuario = usuarioRepositorio.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        return new UsuarioActualDTO(usuario.getUsername(), usuario.getNombreCompleto());
     }
 
     public Usuario actualizar(Integer id, Usuario datos) {

@@ -61,6 +61,12 @@ export interface ResultadoSimulacion {
   nombreEspecialista: string;
 }
 
+/** Cuenta autenticada (GET /api/usuario/actual). */
+export interface UsuarioActual {
+  username: string;
+  nombreCompleto: string;
+}
+
 /* ---------- Evaluador y administrador ---------- */
 
 export interface UsuarioResumen {

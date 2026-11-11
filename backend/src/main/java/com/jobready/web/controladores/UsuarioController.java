@@ -1,6 +1,7 @@
 package com.jobready.web.controladores;
 
 import com.jobready.web.entidades.Usuario;
+import com.jobready.web.dtos.UsuarioActualDTO;
 import com.jobready.web.dtos.UsuarioDTO;
 import com.jobready.web.servicios.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,13 @@ public class UsuarioController {
     @PostMapping("/usuario") //ENDPOINT
     public Usuario insertar(@RequestBody UsuarioDTO usuarioDTO) {
         return usuarioServicio.insertar(usuarioDTO.convertirAEntidad());
+    }
+
+    /** Cuenta del candidato conectado. La anotación del método reemplaza la restricción ADMIN de la clase. */
+    @GetMapping("/usuario/actual")
+    @PreAuthorize("hasRole('CANDIDATO')")
+    public UsuarioActualDTO obtenerActual(Authentication authentication) {
+        return usuarioServicio.obtenerActual(authentication.getName());
     }
 
     @GetMapping("/usuarios")
