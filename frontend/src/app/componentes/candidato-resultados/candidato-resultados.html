@@ -29,6 +29,19 @@
         <p><strong>Evaluador:</strong> {{ resultado.nombreEspecialista || 'Sin asignar' }}</p>
         <h3>Respuesta y observaciones del evaluador</h3>
         <p class="result-feedback">{{ resultado.resumenFeedback }}</p>
+        <h3>Indicaciones de evaluación (PDF)</h3>
+        @if (!resultado.idArchivoPdf) {
+          <p class="muted">El evaluador no adjuntó un PDF en esta evaluación.</p>
+        } @else if (cargandoPdf) {
+          <p class="muted" role="status">Cargando PDF…</p>
+        } @else if (errorPdf) {
+          <p role="alert">{{ errorPdf }}</p>
+        } @else if (urlPdf) {
+          <p class="pdf-actions">
+            <a class="primary-link" [href]="urlPdf" target="_blank" rel="noopener">Ver PDF</a>
+            <a class="secondary-link" [href]="urlPdf" [attr.download]="'indicaciones-evaluacion-' + resultado.idSimulacion + '.pdf'">Descargar PDF</a>
+          </p>
+        }
         <a routerLink="/historial" class="secondary-link">← Volver al historial</a>
       </div>
     </section>

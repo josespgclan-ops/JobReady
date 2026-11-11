@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api-configuracion';
 import { ApiRecurso, RegistroApi } from './api-recurso';
-import { EnvioEntrevista, ResultadoSimulacion, SimulacionResumen } from '../modelos/api-modelos';
+import { ArchivoSimulacion, EnvioEntrevista, ResultadoSimulacion, SimulacionResumen } from '../modelos/api-modelos';
 
 @Injectable({ providedIn: 'root' })
 export class SimulacionesServicio {
@@ -51,6 +51,11 @@ export class SimulacionesServicio {
     datos.append('idCarrera', String(idCarrera));
     datos.append('duracionSegundos', String(duracionSegundos));
     return this.http.post<EnvioEntrevista>(`${API_BASE_URL}/simulacion/enviar`, datos);
+  }
+
+  /** Archivos de una práctica (metadatos). */
+  listarArchivosDe(idSimulacion: number): Observable<ArchivoSimulacion[]> {
+    return this.http.get<ArchivoSimulacion[]>(`${API_BASE_URL}/archivos-simulacion/simulacion/${idSimulacion}`);
   }
 
   /**

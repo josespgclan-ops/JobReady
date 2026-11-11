@@ -61,6 +61,8 @@ export interface ResultadoSimulacion {
   nombreEspecialista: string;
   /** Fecha en que el evaluador envió los resultados. */
   fechaEvaluacion?: string | null;
+  /** PDF con indicaciones de evaluación; null si no se adjuntó. */
+  idArchivoPdf?: number | null;
 }
 
 /** Cuenta autenticada (GET /api/usuario/actual). */
@@ -83,6 +85,15 @@ export interface EnvioEntrevista {
   estadoRevision: EstadoRevision;
   idArchivoVideo?: number | null;
   fechaEvaluacion?: string | null;
+}
+
+/** Metadatos de un archivo de práctica: video del candidato o PDF del evaluador. */
+export interface ArchivoSimulacion {
+  idArchivo: number;
+  tipoArchivo: 'video' | 'pdf_evaluacion' | string;
+  urlAlmacenamiento: string;
+  pesoMb?: number | null;
+  fechaCreacion?: string | null;
 }
 
 /* ---------- Evaluador y administrador ---------- */

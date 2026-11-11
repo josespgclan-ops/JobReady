@@ -22,4 +22,6 @@ public class ResultadoSimulacionDTO {
     private String nombreEspecialista;
     /** Fecha en que el evaluador envió los resultados. */
     private LocalDateTime fechaEvaluacion;
+    /** PDF con las indicaciones de evaluación; null si el evaluador no adjuntó ninguno. */
+    private Integer idArchivoPdf;
 }

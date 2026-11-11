@@ -60,6 +60,12 @@
               <span class="hint">{{ feedback.trim().length }} caracteres · mínimo 20</span>
               @if (intentoEnviar && feedbackInvalido) { <span class="error">Escribe al menos 20 caracteres de retroalimentación.</span> }
             </div>
+            <div class="field full">
+              <label for="pdf-indicaciones">PDF con indicaciones para el candidato (opcional)</label>
+              <input id="pdf-indicaciones" name="pdf" type="file" accept="application/pdf,.pdf" (change)="seleccionarPdf($event)">
+              <span class="hint">{{ pdf ? pdf.name : 'Máximo 10 MB.' }}</span>
+              @if (errorPdf) { <span class="error">{{ errorPdf }}</span> }
+            </div>
           </div>
           <div class="actions">
             <button class="btn primary" type="submit" [disabled]="enviando || respuestas.length === 0">{{ enviando ? 'Enviando…' : 'Enviar evaluación' }}</button>

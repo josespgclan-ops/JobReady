@@ -1,11 +1,18 @@
 package com.jobready.web.servicios;
 
+import com.jobready.web.entidades.ArchivoSimulacion;
 import com.jobready.web.entidades.EvaluacionSimulacion;
+import com.jobready.web.entidades.Simulacion;
+import com.jobready.web.repositorios.ArchivoSimulacionRepositorio;
 import com.jobready.web.repositorios.EvaluacionSimulacionRepositorio;
+import com.jobready.web.repositorios.SimulacionRepositorio;
 import com.jobready.web.repositorios.UsuarioRepositorio;
 import com.jobready.web.entidades.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +27,12 @@ public class EvaluacionSimulacionServicio implements Serializable {
     private EvaluacionSimulacionRepositorio evaluacionSimulacionRepositorio;
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
+    @Autowired
+    private SimulacionRepositorio simulacionRepositorio;
+    @Autowired
+    private ArchivoSimulacionRepositorio archivoSimulacionRepositorio;
+    @Autowired
+    private ArchivoSimulacionServicio archivoSimulacionServicio;
 
     public EvaluacionSimulacion insertar(EvaluacionSimulacion evaluacionSimulacion) {
         return evaluacionSimulacionRepositorio.save(evaluacionSimulacion);
@@ -34,19 +47,42 @@ public class EvaluacionSimulacionServicio implements Serializable {
      * Valida los rangos y evita evaluar dos veces la misma simulación.
      */
     public EvaluacionSimulacion registrarComoEspecialista(EvaluacionSimulacion evaluacion, String username) {
+        return registrarComoEspecialista(evaluacion, username, null);
+    }
+
+    /**
+     * Igual que el registro normal, pero con un PDF opcional de indicaciones para el candidato.
+     * La evaluación y el PDF se guardan en la misma transacción.
+     */
+    @Transactional
+    public EvaluacionSimulacion registrarComoEspecialista(EvaluacionSimulacion evaluacion, String username,
+                                                          MultipartFile pdf) {
         if (evaluacion.getSimulacion() == null || evaluacion.getSimulacion().getIdSimulacion() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Falta la simulacion a evaluar");
         }
-        if (evaluacionSimulacionRepositorio.findBySimulacion_IdSimulacion(evaluacion.getSimulacion().getIdSimulacion()) != null) {
+        Simulacion simulacion = simulacionRepositorio.findById(evaluacion.getSimulacion().getIdSimulacion())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la simulacion"));
+        if (evaluacionSimulacionRepositorio.findBySimulacion_IdSimulacion(simulacion.getIdSimulacion()) != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Esta simulacion ya fue evaluada por otro especialista");
         }
+        // Una entrevista asignada a un evaluador solo la evalúa ese evaluador.
+        if (simulacion.getEvaluador() != null && !username.equals(simulacion.getEvaluador().getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Esta entrevista está asignada a otro evaluador");
+        }
         validarRubrica(evaluacion);
+        byte[] bytesPdf = pdf != null && !pdf.isEmpty() ? archivoSimulacionServicio.leerPdf(pdf) : null;
         Usuario especialista = usuarioRepositorio.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+        evaluacion.setSimulacion(simulacion);
         evaluacion.setEspecialista(especialista);
         evaluacion.setEvaluadoPorEspecialista(true);
         evaluacion.setFechaEvaluacion(LocalDateTime.now());
-        return evaluacionSimulacionRepositorio.save(evaluacion);
+        EvaluacionSimulacion guardada = evaluacionSimulacionRepositorio.save(evaluacion);
+        if (bytesPdf != null) {
+            archivoSimulacionServicio.guardar(simulacion, ArchivoSimulacionServicio.TIPO_PDF_EVALUACION,
+                    MediaType.APPLICATION_PDF_VALUE, bytesPdf, null);
+        }
+        return guardada;
     }
 
     private void validarRubrica(EvaluacionSimulacion evaluacion) {
@@ -85,6 +121,11 @@ public class EvaluacionSimulacionServicio implements Serializable {
         if (evaluacion.getEspecialista() != null) {
             nombreEspecialista = evaluacion.getEspecialista().getNombreCompleto();
         }
+        Integer idArchivoPdf = archivoSimulacionRepositorio
+                .findFirstBySimulacion_IdSimulacionAndTipoArchivoOrderByFechaCreacionDesc(
+                        idSimulacion, ArchivoSimulacionServicio.TIPO_PDF_EVALUACION)
+                .map(ArchivoSimulacion::getIdArchivo)
+                .orElse(null);
         return new ResultadoSimulacionDTO(
                 evaluacion.getSimulacion().getIdSimulacion(),
                 evaluacion.getPuntajeGeneral(),
@@ -93,7 +134,8 @@ public class EvaluacionSimulacionServicio implements Serializable {
                 evaluacion.getSeguridadCalificacion(),
                 evaluacion.getFeedbackResumen(),
                 nombreEspecialista,
-                evaluacion.getFechaEvaluacion()
+                evaluacion.getFechaEvaluacion(),
+                idArchivoPdf
         );
     }
 
@@ -115,6 +157,8 @@ public class EvaluacionSimulacionServicio implements Serializable {
                 ? evaluacionSimulacionRepositorio.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la evaluacion con id " + id))
                 : buscarPropia(id, username);
+        // El PDF de indicaciones pertenece a la evaluación: se elimina con ella.
+        archivoSimulacionServicio.eliminarPdfsEvaluacion(evaluacion.getSimulacion().getIdSimulacion());
         evaluacionSimulacionRepositorio.delete(evaluacion);
     }
 
@@ -127,3 +171,5 @@ public class EvaluacionSimulacionServicio implements Serializable {
         return evaluacion;
     }
 }
+
+

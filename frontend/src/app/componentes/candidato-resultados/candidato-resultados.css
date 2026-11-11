@@ -1,3 +1,4 @@
 :host{display:block}
 .result-date{color:#46566b;font-size:.92rem}
 .result-feedback{white-space:pre-line;line-height:1.6}
+.pdf-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px}

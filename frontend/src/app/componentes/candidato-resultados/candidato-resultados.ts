@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -14,13 +14,18 @@ import { CandidatoLayoutComponente } from '../candidato-layout/candidato-layout'
   templateUrl: './candidato-resultados.html',
   styleUrls: ['../candidato-layout/candidato-content.css', './candidato-resultados.css'],
 })
-export class CandidatoResultadosComponente implements OnInit {
+export class CandidatoResultadosComponente implements OnInit, OnDestroy {
   private readonly simulacionesServicio = inject(SimulacionesServicio);
   private readonly route = inject(ActivatedRoute);
 
   protected resultado: ResultadoSimulacion | null = null;
   protected cargando = false;
   protected error = '';
+
+  /** PDF de indicaciones: se descarga con el token y se ofrece como URL local. */
+  protected urlPdf = '';
+  protected cargandoPdf = false;
+  protected errorPdf = '';
 
   ngOnInit(): void {
     const idSimulacion = this.route.snapshot.queryParamMap.get('idSimulacion');
@@ -38,6 +43,7 @@ export class CandidatoResultadosComponente implements OnInit {
       next: (resultado) => {
         this.resultado = resultado;
         this.cargando = false;
+        if (resultado.idArchivoPdf) this.cargarPdf(resultado.idArchivoPdf);
       },
 
       error: (respuesta: HttpErrorResponse) => {
@@ -49,5 +55,23 @@ export class CandidatoResultadosComponente implements OnInit {
         this.cargando = false;
       },
     });
+  }
+
+  private cargarPdf(idArchivo: number): void {
+    this.cargandoPdf = true;
+    this.simulacionesServicio.descargarArchivo(idArchivo).subscribe({
+      next: (blob) => {
+        this.urlPdf = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+        this.cargandoPdf = false;
+      },
+      error: () => {
+        this.errorPdf = 'No se pudo cargar el PDF adjunto.';
+        this.cargandoPdf = false;
+      },
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.urlPdf) URL.revokeObjectURL(this.urlPdf);
   }
 }

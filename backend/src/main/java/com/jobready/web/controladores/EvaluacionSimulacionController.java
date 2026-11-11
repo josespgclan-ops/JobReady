@@ -5,6 +5,8 @@ import com.jobready.web.entidades.EvaluacionSimulacion;
 import com.jobready.web.dtos.EvaluacionSimulacionDTO;
 import com.jobready.web.servicios.EvaluacionSimulacionServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,16 @@ public class EvaluacionSimulacionController {
     public EvaluacionSimulacion insertar(@RequestBody EvaluacionSimulacionDTO evaluacionSimulacionDTO,
                                          Authentication authentication) {
         return evaluacionSimulacionServicio.registrarComoEspecialista(evaluacionSimulacionDTO.convertirAEntidad(), authentication.getName());
+    }
+
+    /** Misma evaluación, enviada como multipart para adjuntar el PDF de indicaciones al candidato. */
+    @PostMapping(value = "/evaluacion-simulacion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('EVALUADOR')")
+    public EvaluacionSimulacion insertarConPdf(@RequestPart("evaluacion") EvaluacionSimulacionDTO evaluacionSimulacionDTO,
+                                               @RequestPart(value = "pdf", required = false) MultipartFile pdf,
+                                               Authentication authentication) {
+        return evaluacionSimulacionServicio.registrarComoEspecialista(
+                evaluacionSimulacionDTO.convertirAEntidad(), authentication.getName(), pdf);
     }
 
     @GetMapping("/evaluaciones-simulacion")

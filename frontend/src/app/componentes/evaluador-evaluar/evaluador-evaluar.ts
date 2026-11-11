@@ -34,6 +34,10 @@ export class EvaluadorEvaluar implements OnInit {
   protected error = '';
   protected intentoEnviar = false;
 
+  // PDF opcional con indicaciones para el candidato.
+  protected pdf: File | null = null;
+  protected errorPdf = '';
+
   // Rúbrica
   protected puntaje: number | null = null;
   protected nivel = '';
@@ -53,6 +57,25 @@ export class EvaluadorEvaluar implements OnInit {
       },
       error: () => { this.error = 'No se pudo cargar la práctica.'; this.cargando = false; },
     });
+  }
+
+  protected seleccionarPdf(evento: Event): void {
+    const entrada = evento.target as HTMLInputElement;
+    const archivo = entrada.files?.[0] ?? null;
+    this.errorPdf = '';
+    if (archivo && (archivo.type !== 'application/pdf' && !archivo.name.toLowerCase().endsWith('.pdf'))) {
+      this.errorPdf = 'Selecciona un archivo PDF.';
+      entrada.value = '';
+      this.pdf = null;
+      return;
+    }
+    if (archivo && archivo.size > 10 * 1024 * 1024) {
+      this.errorPdf = 'El PDF no puede superar los 10 MB.';
+      entrada.value = '';
+      this.pdf = null;
+      return;
+    }
+    this.pdf = archivo;
   }
 
   /** Promedio en segundos de las respuestas (se envía en la evaluación). */
@@ -87,7 +110,7 @@ export class EvaluadorEvaluar implements OnInit {
       tiempoPromedioRespuesta: this.tiempoPromedio,
       seguridadCalificacion: Math.round(this.seguridad!) / 100,
       feedbackResumen: this.feedback.trim(),
-    }).subscribe({
+    }, this.pdf).subscribe({
       next: () => void this.router.navigate(['/evaluador/evaluaciones'], { queryParams: { registrada: this.idSimulacion } }),
       error: (respuesta: HttpErrorResponse) => {
         this.enviando = false;
