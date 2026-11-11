@@ -78,7 +78,7 @@
     @if (vista === 'candidato') {
       <div class="next-step">
         <p>¿Listo para responder en video?</p>
-        <a class="home-button" routerLink="/entrevista">Siguiente: iniciar prueba →</a>
+        <a class="home-button" routerLink="/entrevista" [queryParams]="carreraSeleccionada ? { carrera: carreraSeleccionada } : {}">Siguiente: iniciar prueba →</a>
       </div>
     }
   </section>

@@ -10,6 +10,11 @@
         <section class="setup-card">
           <h2>Antes de comenzar</h2>
           <ol><li>Permite el acceso a cámara y micrófono.</li><li>Comprueba que te ves y escuchas correctamente.</li><li>Inicia la grabación cuando estés listo.</li></ol>
+          <label class="career-label" for="carrera-entrevista">Carrera de la entrevista</label>
+          <select id="carrera-entrevista" class="career-select" name="carrera" [(ngModel)]="idCarrera" [disabled]="enviando || grabando">
+            <option [ngValue]="null" disabled>Selecciona una carrera</option>
+            @for (carrera of carreras; track carrera.idCarrera) { <option [ngValue]="carrera.idCarrera">{{ carrera.nombre }}</option> }
+          </select>
           <button type="button" class="primary" (click)="preparar()" [disabled]="preparado || procesando || grabando">{{ procesando ? 'Comprobando…' : preparado ? 'Dispositivos listos' : 'Comprobar cámara y micrófono' }}</button>
           <p class="status" role="status">{{ mensaje }}</p>
         </section>
@@ -19,11 +24,21 @@
           <button type="button" (click)="alternarMicrofono()" [attr.aria-pressed]="!microfonoActivo">{{ microfonoActivo ? 'Silenciar micrófono' : 'Activar micrófono' }}</button>
           <button type="button" (click)="alternarCamara()" [attr.aria-pressed]="!camaraActiva">{{ camaraActiva ? 'Apagar cámara' : 'Activar cámara' }}</button>
           @if (!grabando) { <button type="button" class="primary" (click)="iniciarGrabacion()">Iniciar grabación</button> }
-          @if (grabando) { <button type="button" class="stop" (click)="detenerGrabacion()">Finalizar grabación</button> }
+          @if (grabando) { <button type="button" class="stop" (click)="detenerGrabacion()">Detener grabación</button> }
         </div>
       }
       @if (videoGrabado) {
-        <section class="result-card"><h2>Revisa tu grabación</h2><video [src]="videoGrabado" controls playsinline></video><button type="button" class="primary" (click)="descargarGrabacion()">Descargar video</button><p>La subida al backend está pendiente; este video permanece solo en tu navegador.</p></section>
+        <section class="result-card">
+          <h2>Revisa tu grabación</h2>
+          <video [src]="videoGrabado" controls playsinline></video>
+          <div class="result-actions">
+            <button type="button" class="primary" (click)="enviarGrabacion()" [disabled]="!puedeEnviar">{{ enviando ? 'Enviando…' : enviado ? 'Enviado' : 'Enviar' }}</button>
+            <button type="button" class="secondary" (click)="descargarGrabacion()" [disabled]="enviando">Descargar video</button>
+          </div>
+          @if (!idCarrera && !enviado) { <p>Selecciona la carrera de la entrevista para poder enviarla.</p> }
+          @if (errorEnvio) { <p class="send-error" role="alert">{{ errorEnvio }}</p> }
+          @if (mensajeEnvio) { <p class="send-ok" role="status">{{ mensajeEnvio }} <a routerLink="/historial">Ir al historial</a></p> }
+        </section>
       }
     
   </div>

@@ -69,6 +69,22 @@ export interface UsuarioActual {
   nombreCompleto: string;
 }
 
+export type EstadoRevision = 'PENDIENTE' | 'REVISADA' | 'EN_CURSO';
+
+/** Fila del historial del candidato (GET /api/simulaciones/mias/envios). */
+export interface EnvioEntrevista {
+  idSimulacion: number;
+  idCarrera?: number | null;
+  nombreCarrera?: string | null;
+  numeroSimulacion?: number | null;
+  fechaEnvio?: string | null;
+  duracionSegundos?: number | null;
+  estado?: string | null;
+  estadoRevision: EstadoRevision;
+  idArchivoVideo?: number | null;
+  fechaEvaluacion?: string | null;
+}
+
 /* ---------- Evaluador y administrador ---------- */
 
 export interface UsuarioResumen {
