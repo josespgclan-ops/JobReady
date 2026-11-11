@@ -9,6 +9,7 @@ import com.jobready.web.entidades.Usuario;
 import com.jobready.web.repositorios.ArchivoSimulacionRepositorio;
 import com.jobready.web.repositorios.CarreraRepositorio;
 import com.jobready.web.repositorios.EvaluacionSimulacionRepositorio;
+import com.jobready.web.repositorios.RespuestaEntrevistaRepositorio;
 import com.jobready.web.repositorios.SimulacionRepositorio;
 import com.jobready.web.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,8 @@ public class SimulacionServicio implements Serializable {
     private EvaluacionSimulacionRepositorio evaluacionSimulacionRepositorio;
     @Autowired
     private ArchivoSimulacionServicio archivoSimulacionServicio;
+    @Autowired
+    private RespuestaEntrevistaRepositorio respuestaEntrevistaRepositorio;
 
     public Simulacion insertar(Simulacion simulacion) {
         return simulacionRepositorio.save(simulacion);
@@ -171,6 +174,25 @@ public class SimulacionServicio implements Serializable {
         simulacion.setDuracionSegundos(datos.getDuracionSegundos());
         simulacion.setEstado(datos.getEstado());
         return simulacionRepositorio.save(simulacion);
+    }
+
+    /**
+     * El administrador elimina una entrevista pendiente: borra sus videos (con su contenido),
+     * sus respuestas y la práctica, de modo que desaparece del historial del candidato y de la
+     * cola del evaluador. Las prácticas ya evaluadas no se eliminan por aquí.
+     */
+    @Transactional
+    public void eliminarEnvioPendiente(Integer idSimulacion) {
+        Simulacion simulacion = simulacionRepositorio.findById(idSimulacion)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "La entrevista ya no existe"));
+        if (evaluacionSimulacionRepositorio.findBySimulacion_IdSimulacion(idSimulacion) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "La entrevista ya fue evaluada; no se puede eliminar desde revisiones pendientes");
+        }
+        respuestaEntrevistaRepositorio.deleteAll(respuestaEntrevistaRepositorio.findBySimulacion_IdSimulacion(idSimulacion));
+        archivoSimulacionRepositorio.deleteAll(
+                archivoSimulacionRepositorio.findBySimulacion_IdSimulacionOrderByFechaCreacionAsc(idSimulacion));
+        simulacionRepositorio.delete(simulacion);
     }
 
     public void eliminar(Integer id) {

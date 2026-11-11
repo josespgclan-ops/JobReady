@@ -6,6 +6,7 @@
   </div>
 
   @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
+  @if (mensaje) { <p class="notice ok" role="status">{{ mensaje }}</p> }
 
   <section class="box" aria-label="Prácticas sin evaluación">
     @if (cargando) {
@@ -15,7 +16,7 @@
     } @else {
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Candidato</th><th>Carrera</th><th>Terminó</th><th>Tiempo de espera</th><th>Estado</th></tr></thead>
+          <thead><tr><th>Candidato</th><th>Carrera</th><th>Terminó</th><th>Tiempo de espera</th><th>Estado</th><th><span class="sr-only">Acción</span></th></tr></thead>
           <tbody>
             @for (s of pendientes; track s.idSimulacion) {
               <tr>
@@ -24,6 +25,7 @@
                 <td>{{ s.fechaFin | date: 'dd/MM/yyyy HH:mm' }}</td>
                 <td>{{ horasEsperando(s) < 1 ? 'Menos de 1 hora' : horasEsperando(s) + ' h' }}</td>
                 <td>@if (retrasada(s)) { <span class="badge off">Retrasada (+48 h)</span> } @else { <span class="badge wait">En plazo</span> }</td>
+                <td><button type="button" class="btn danger small" (click)="eliminar(s)" [disabled]="eliminando !== null" [attr.aria-label]="'Eliminar la entrevista de ' + (s.usuario?.nombreCompleto ?? s.usuario?.username)">{{ eliminando === s.idSimulacion ? 'Eliminando…' : 'Eliminar' }}</button></td>
               </tr>
             }
           </tbody>

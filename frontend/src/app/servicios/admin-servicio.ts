@@ -60,6 +60,10 @@ export class AdminServicio {
   listarPendientes(): Observable<SimulacionDetalle[]> {
     return this.http.get<SimulacionDetalle[]>(`${API_BASE_URL}/simulaciones/pendientes`);
   }
+  /** Elimina una entrevista pendiente con su video: deja de verse en el historial del candidato y en la cola del evaluador. */
+  eliminarEnvioPendiente(idSimulacion: number): Observable<void> {
+    return this.http.delete<void>(`${API_BASE_URL}/simulacion/${idSimulacion}/envio`);
+  }
   listarEvaluaciones(): Observable<EvaluacionSimulacion[]> {
     return this.http.get<EvaluacionSimulacion[]>(`${API_BASE_URL}/evaluaciones-simulacion`);
   }

@@ -68,6 +68,14 @@ public class SimulacionController {
         return simulacionServicio.enviarEntrevista(authentication.getName(), idCarrera, duracionSegundos, video);
     }
 
+    /** Revisiones pendientes: el administrador elimina la entrevista enviada y su video. */
+    @DeleteMapping("/simulacion/{id}/envio")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminarEnvioPendiente(@PathVariable Integer id) {
+        simulacionServicio.eliminarEnvioPendiente(id);
+    }
+
     @PutMapping("/simulacion/{id}")
     @PreAuthorize("hasRole('CANDIDATO')")
     public Simulacion actualizar(@PathVariable Integer id, @RequestBody SimulacionDTO simulacionDTO) {
