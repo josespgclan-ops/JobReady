@@ -26,4 +26,10 @@ export class EvaluadorPendientes implements OnInit {
       error: () => { this.error = 'No se pudo cargar la cola de prácticas.'; this.cargando = false; },
     });
   }
+
+  /** Duración en mm:ss (los videos duran como máximo 3 minutos, así que "min" redondeado no sirve). */
+  protected duracion(segundos?: number | null): string {
+    if (!segundos) return '—';
+    return `${Math.floor(segundos / 60)}:${(segundos % 60).toString().padStart(2, '0')}`;
+  }
 }

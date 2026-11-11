@@ -22,7 +22,7 @@
                 <td><strong>{{ s.usuario?.nombreCompleto ?? 'Candidato' }}</strong><br><span class="muted">&#64;{{ s.usuario?.username }}</span></td>
                 <td>{{ s.carrera?.nombre }}</td>
                 <td>{{ s.fechaFin | date: 'dd/MM/yyyy HH:mm' }}</td>
-                <td>{{ s.duracionSegundos ? (s.duracionSegundos / 60).toFixed(0) + ' min' : '—' }}</td>
+                <td>{{ duracion(s.duracionSegundos) }}</td>
                 <td><a class="btn primary small" [routerLink]="['/evaluador/evaluar', s.idSimulacion]">Evaluar</a></td>
               </tr>
             }
