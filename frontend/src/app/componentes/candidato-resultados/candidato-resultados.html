@@ -20,13 +20,15 @@
     <section class="content-card" aria-labelledby="titulo-informe">
       <div class="card-heading" id="titulo-informe">Informe de desempeño</div>
       <div class="card-body">
+        <p class="result-date"><strong>Resultados enviados el:</strong>
+          {{ resultado.fechaEvaluacion ? (resultado.fechaEvaluacion | date: "dd/MM/yyyy 'a las' HH:mm") : 'Fecha no registrada' }}</p>
         <h2>Puntaje general: {{ resultado.puntajeGeneral }}/100</h2>
         <p><strong>Nivel de comunicación:</strong> {{ resultado.nivelComunicacion }}</p>
         <p><strong>Seguridad:</strong> {{ resultado.seguridadCalificacion | percent: '1.0-0' }}</p>
         <p><strong>Tiempo promedio de respuesta:</strong> {{ resultado.tiempoPromedioRespuesta | number: '1.0-1' }} segundos</p>
         <p><strong>Evaluador:</strong> {{ resultado.nombreEspecialista || 'Sin asignar' }}</p>
-        <h3>Feedback general</h3>
-        <p>{{ resultado.resumenFeedback }}</p>
+        <h3>Respuesta y observaciones del evaluador</h3>
+        <p class="result-feedback">{{ resultado.resumenFeedback }}</p>
         <a routerLink="/historial" class="secondary-link">← Volver al historial</a>
       </div>
     </section>

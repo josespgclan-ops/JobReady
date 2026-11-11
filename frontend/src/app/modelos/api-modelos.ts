@@ -59,6 +59,8 @@ export interface ResultadoSimulacion {
   seguridadCalificacion: number;
   resumenFeedback: string;
   nombreEspecialista: string;
+  /** Fecha en que el evaluador envió los resultados. */
+  fechaEvaluacion?: string | null;
 }
 
 /** Cuenta autenticada (GET /api/usuario/actual). */

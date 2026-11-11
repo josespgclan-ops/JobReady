@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,4 +20,6 @@ public class ResultadoSimulacionDTO {
     private BigDecimal seguridadCalificacion;
     private String resumenFeedback;
     private String nombreEspecialista;
+    /** Fecha en que el evaluador envió los resultados. */
+    private LocalDateTime fechaEvaluacion;
 }

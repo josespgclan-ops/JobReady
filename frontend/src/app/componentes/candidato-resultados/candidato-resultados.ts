@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { DecimalPipe, PercentPipe } from '@angular/common';
+import { DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ResultadoSimulacion } from '../../modelos/api-modelos';
@@ -10,7 +10,7 @@ import { CandidatoLayoutComponente } from '../candidato-layout/candidato-layout'
   selector: 'app-candidato-resultados',
   // Angular 22 usa OnPush por defecto; esta vista cambia al llegar datos de la API.
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [RouterLink, DecimalPipe, PercentPipe, CandidatoLayoutComponente],
+  imports: [RouterLink, DatePipe, DecimalPipe, PercentPipe, CandidatoLayoutComponente],
   templateUrl: './candidato-resultados.html',
   styleUrls: ['../candidato-layout/candidato-content.css', './candidato-resultados.css'],
 })

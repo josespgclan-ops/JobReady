@@ -3,6 +3,7 @@ package com.jobready.web.entidades;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "evaluaciones_simulacion")
@@ -33,6 +34,9 @@ public class EvaluacionSimulacion {
     @ManyToOne
     @JoinColumn(name = "id_especialista")
     private Usuario especialista;
+    /** Momento en que el evaluador envió los resultados al candidato. */
+    @Column(name = "fecha_evaluacion")
+    private LocalDateTime fechaEvaluacion;
 }
 
 

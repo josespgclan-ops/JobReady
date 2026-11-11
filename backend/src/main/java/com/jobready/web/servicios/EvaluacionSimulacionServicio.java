@@ -7,6 +7,7 @@ import com.jobready.web.entidades.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import com.jobready.web.dtos.ResultadoSimulacionDTO;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,7 @@ public class EvaluacionSimulacionServicio implements Serializable {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
         evaluacion.setEspecialista(especialista);
         evaluacion.setEvaluadoPorEspecialista(true);
+        evaluacion.setFechaEvaluacion(LocalDateTime.now());
         return evaluacionSimulacionRepositorio.save(evaluacion);
     }
 
@@ -90,7 +92,8 @@ public class EvaluacionSimulacionServicio implements Serializable {
                 evaluacion.getTiempoPromedioRespuesta(),
                 evaluacion.getSeguridadCalificacion(),
                 evaluacion.getFeedbackResumen(),
-                nombreEspecialista
+                nombreEspecialista,
+                evaluacion.getFechaEvaluacion()
         );
     }
 
@@ -124,5 +127,3 @@ public class EvaluacionSimulacionServicio implements Serializable {
         return evaluacion;
     }
 }
-
-
