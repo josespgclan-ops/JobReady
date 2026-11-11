@@ -1,29 +1,52 @@
 <app-candidato-layout active="historial">
   <h1 class="page-title">Historial de prácticas</h1>
-  <p class="page-intro">Aquí podrás seguir tus entrevistas y consultar los informes publicados por evaluadores.</p>
-  <section class="content-card" aria-label="Historial de simulaciones">
-    <div class="history-header" aria-hidden="true"><span>Simulación</span><span>Estado</span><span>Duración</span><span>Informe</span></div>
+  <p class="page-intro">Aquí podrás ver los videos que enviaste, su estado de revisión y los informes publicados por evaluadores.</p>
+
+  @if (videoAbierto) {
+    <section class="content-card video-panel" aria-labelledby="titulo-video">
+      <div class="video-panel-heading">
+        <h2 id="titulo-video">{{ videoAbierto.nombreCarrera ?? 'Entrevista' }} · enviada el {{ videoAbierto.fechaEnvio | date: 'dd/MM/yyyy HH:mm' }}</h2>
+        <button type="button" class="secondary-link close-video" (click)="cerrarVideo()">Cerrar</button>
+      </div>
+      @if (cargandoVideo) { <p class="history-status" role="status">Cargando video…</p> }
+      @if (errorVideo) { <p class="history-status" role="alert">{{ errorVideo }}</p> }
+      @if (urlVideo) { <video [src]="urlVideo" controls playsinline></video> }
+    </section>
+  }
+
+  <section class="content-card" aria-label="Historial de entrevistas enviadas">
+    <div class="history-header" aria-hidden="true"><span>Entrevista</span><span>Fecha de envío</span><span>Estado de revisión</span><span>Video</span><span>Informe</span></div>
 
     @if (cargando) {
       <p class="history-status" role="status">Cargando tu historial…</p>
     } @else if (error) {
       <p class="history-status" role="alert">{{ error }}</p>
-    } @else if (simulaciones.length === 0) {
-      <div class="empty-state"><span class="empty-icon" aria-hidden="true">↗</span><h2>Aún no hay prácticas para mostrar</h2><p>Cuando completes una práctica, aparecerá aquí junto con su informe.</p><a routerLink="/entrevista" class="primary-link">Preparar una práctica</a></div>
+    } @else if (envios.length === 0) {
+      <div class="empty-state"><span class="empty-icon" aria-hidden="true">↗</span><h2>Aún no has enviado entrevistas</h2><p>Cuando envíes una grabación, aparecerá aquí junto con su estado de revisión.</p><a routerLink="/entrevista" class="primary-link">Preparar una práctica</a></div>
     } @else {
       <ul class="history-list">
-        @for (simulacion of simulaciones; track simulacion.idSimulacion) {
+        @for (envio of envios; track envio.idSimulacion) {
           <li class="history-row">
             <span class="history-name">
-              <strong>{{ simulacion.carrera?.nombre ?? 'Simulación' }}</strong>
-              <small>{{ simulacion.fechaInicio | date: 'dd/MM/yyyy HH:mm' }}</small>
+              <strong>{{ envio.nombreCarrera ?? 'Entrevista' }}</strong>
+              <small>Práctica n.º {{ envio.numeroSimulacion ?? '—' }}@if (duracion(envio)) { · {{ duracion(envio) }} }</small>
             </span>
-            <span class="history-state" [class.done]="estaFinalizada(simulacion)">{{ textoEstado(simulacion) }}</span>
-            <span class="history-cell">{{ duracion(simulacion) }}</span>
+            <span class="history-cell">{{ envio.fechaEnvio ? (envio.fechaEnvio | date: 'dd/MM/yyyy HH:mm') : '—' }}</span>
             <span class="history-cell">
-              @if (estaFinalizada(simulacion)) {
-                <a class="secondary-link" routerLink="/resultados" [queryParams]="{ idSimulacion: simulacion.idSimulacion }"
-                   [attr.aria-label]="'Ver informe de ' + (simulacion.carrera?.nombre ?? 'la simulación')">Ver informe</a>
+              <span class="history-state" [class.done]="envio.estadoRevision === 'REVISADA'" [class.progress]="envio.estadoRevision === 'EN_CURSO'">{{ textoEstado(envio) }}</span>
+            </span>
+            <span class="history-cell">
+              @if (envio.idArchivoVideo) {
+                <button type="button" class="secondary-link" (click)="verVideo(envio)"
+                        [attr.aria-label]="'Ver video de ' + (envio.nombreCarrera ?? 'la entrevista')">Ver video</button>
+              } @else {
+                <span class="muted">Sin video</span>
+              }
+            </span>
+            <span class="history-cell">
+              @if (envio.estadoRevision === 'REVISADA') {
+                <a class="secondary-link" routerLink="/resultados" [queryParams]="{ idSimulacion: envio.idSimulacion }"
+                   [attr.aria-label]="'Ver informe de ' + (envio.nombreCarrera ?? 'la entrevista')">Ver informe</a>
               } @else {
                 <span class="muted">Pendiente</span>
               }

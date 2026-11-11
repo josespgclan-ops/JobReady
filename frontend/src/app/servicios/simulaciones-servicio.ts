@@ -38,6 +38,11 @@ export class SimulacionesServicio {
     return this.http.get<ResultadoSimulacion>(`${API_BASE_URL}/resultado/${idSimulacion}`);
   }
 
+  /** Historial del candidato con video y estado de revisión de cada práctica. */
+  listarMisEnvios(): Observable<EnvioEntrevista[]> {
+    return this.http.get<EnvioEntrevista[]>(`${API_BASE_URL}/simulaciones/mias/envios`);
+  }
+
   /** Envía la grabación; el backend crea la práctica, guarda el video y asigna un evaluador. */
   enviarEntrevista(video: Blob, idCarrera: number, duracionSegundos: number): Observable<EnvioEntrevista> {
     const extension = video.type.includes('mp4') ? 'mp4' : 'webm';
@@ -46,6 +51,14 @@ export class SimulacionesServicio {
     datos.append('idCarrera', String(idCarrera));
     datos.append('duracionSegundos', String(duracionSegundos));
     return this.http.post<EnvioEntrevista>(`${API_BASE_URL}/simulacion/enviar`, datos);
+  }
+
+  /**
+   * Descarga el contenido de un archivo como Blob. Se usa HttpClient (y no un enlace directo)
+   * para que el interceptor agregue el token JWT.
+   */
+  descargarArchivo(idArchivo: number): Observable<Blob> {
+    return this.http.get(`${API_BASE_URL}/archivo-simulacion/${idArchivo}/contenido`, { responseType: 'blob' });
   }
 
   listarSesiones<T extends RegistroApi>(): Observable<T[]> { return this.recurso<T>('sesiones-programadas', 'sesion-programada').listar(); }

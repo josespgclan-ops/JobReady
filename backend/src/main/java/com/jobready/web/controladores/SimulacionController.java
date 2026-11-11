@@ -50,6 +50,13 @@ public class SimulacionController {
         return simulacionServicio.listarPorUsuario(authentication.getName());
     }
 
+    /** Historial del candidato con el video enviado y el estado de revisión de cada práctica. */
+    @GetMapping("/simulaciones/mias/envios")
+    @PreAuthorize("hasRole('CANDIDATO')")
+    public List<EnvioEntrevistaDTO> listarMisEnvios(Authentication authentication) {
+        return simulacionServicio.listarEnviosPorUsuario(authentication.getName());
+    }
+
     /** El candidato envía la grabación de su entrevista para que un evaluador la revise. */
     @PostMapping(value = "/simulacion/enviar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('CANDIDATO')")
