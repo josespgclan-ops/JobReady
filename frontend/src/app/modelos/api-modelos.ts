@@ -54,15 +54,25 @@ export interface SimulacionResumen {
 export interface ResultadoSimulacion {
   idSimulacion: number;
   puntajeGeneral: number;
-  nivelComunicacion: string;
+  /** Solo en evaluaciones anteriores a la rúbrica de tres porcentajes. */
+  nivelComunicacion?: string | null;
   tiempoPromedioRespuesta: number;
+  /** Seguridad al responder, de 0 a 1. */
   seguridadCalificacion: number;
-  resumenFeedback: string;
+  /** Comentario de evaluaciones antiguas; las nuevas usan oportunidades de mejora y recomendaciones. */
+  resumenFeedback?: string | null;
   nombreEspecialista: string;
   /** Fecha en que el evaluador envió los resultados. */
   fechaEvaluacion?: string | null;
-  /** PDF con indicaciones de evaluación; null si no se adjuntó. */
+  /** PDF de retroalimentación generado por el sistema al enviar la evaluación. */
   idArchivoPdf?: number | null;
+  nombreCandidato?: string | null;
+  /** Claridad de respuestas (%). */
+  claridadRespuestas?: number | null;
+  /** Dominio del tema (%). */
+  dominioTema?: number | null;
+  oportunidadesMejora?: string | null;
+  recomendaciones?: string | null;
 }
 
 /** Cuenta autenticada (GET /api/usuario/actual). */
@@ -85,6 +95,8 @@ export interface EnvioEntrevista {
   estadoRevision: EstadoRevision;
   idArchivoVideo?: number | null;
   fechaEvaluacion?: string | null;
+  /** PDF de retroalimentación del evaluador. */
+  idArchivoPdf?: number | null;
 }
 
 /** Metadatos de un archivo de práctica: video del candidato o PDF del evaluador. */
@@ -126,20 +138,26 @@ export interface EvaluacionSimulacion {
   idEvaluacion: number;
   simulacion?: SimulacionDetalle;
   puntajeGeneral: number;
-  nivelComunicacion: string;
+  nivelComunicacion?: string | null;
   tiempoPromedioRespuesta: number;
   seguridadCalificacion: number;
-  feedbackResumen?: string;
+  claridadRespuestas?: number | null;
+  dominioTema?: number | null;
+  oportunidadesMejora?: string | null;
+  recomendaciones?: string | null;
+  feedbackResumen?: string | null;
+  fechaEvaluacion?: string | null;
   especialista?: UsuarioResumen | null;
 }
 
+/** Rúbrica del evaluador: el puntaje general lo calcula el backend (promedio de los tres porcentajes). */
 export interface EvaluacionRequest {
   idSimulacion: number;
-  puntajeGeneral: number;
-  nivelComunicacion: string;
-  tiempoPromedioRespuesta: number;
-  seguridadCalificacion: number;
-  feedbackResumen: string;
+  seguridadRespuestas: number;
+  claridadRespuestas: number;
+  dominioTema: number;
+  oportunidadesMejora: string;
+  recomendaciones: string;
 }
 
 export interface CarreraRequest {

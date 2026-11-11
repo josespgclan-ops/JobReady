@@ -16,16 +16,20 @@
     } @else {
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Candidato</th><th>Carrera</th><th>Puntaje</th><th>Comunicación</th><th>Seguridad</th><th>Retroalimentación</th></tr></thead>
+          <thead><tr><th>Candidato</th><th>Carrera</th><th>Puntaje</th><th>Seguridad</th><th>Claridad</th><th>Dominio</th><th>Retroalimentación</th></tr></thead>
           <tbody>
             @for (e of evaluaciones; track e.idEvaluacion) {
               <tr>
                 <td><strong>{{ e.simulacion?.usuario?.nombreCompleto ?? '—' }}</strong></td>
                 <td>{{ e.simulacion?.carrera?.nombre }}</td>
                 <td><strong>{{ e.puntajeGeneral }}</strong>/100</td>
-                <td>{{ e.nivelComunicacion }}</td>
                 <td>{{ e.seguridadCalificacion | percent: '1.0-0' }}</td>
-                <td class="muted">{{ e.feedbackResumen }}</td>
+                <td>{{ e.claridadRespuestas != null ? e.claridadRespuestas + ' %' : '—' }}</td>
+                <td>{{ e.dominioTema != null ? e.dominioTema + ' %' : '—' }}</td>
+                <td class="muted">
+                  @if (e.oportunidadesMejora) { <strong>Mejora:</strong> {{ e.oportunidadesMejora }}<br><strong>Recomendaciones:</strong> {{ e.recomendaciones }} }
+                  @else { {{ e.feedbackResumen }} }
+                </td>
               </tr>
             }
           </tbody>

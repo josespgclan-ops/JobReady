@@ -22,25 +22,38 @@
       <div class="card-body">
         <p class="result-date"><strong>Resultados enviados el:</strong>
           {{ resultado.fechaEvaluacion ? (resultado.fechaEvaluacion | date: "dd/MM/yyyy 'a las' HH:mm") : 'Fecha no registrada' }}</p>
+        @if (resultado.nombreCandidato) { <p><strong>Candidato:</strong> {{ resultado.nombreCandidato }}</p> }
         <h2>Puntaje general: {{ resultado.puntajeGeneral }}/100</h2>
-        <p><strong>Nivel de comunicación:</strong> {{ resultado.nivelComunicacion }}</p>
-        <p><strong>Seguridad:</strong> {{ resultado.seguridadCalificacion | percent: '1.0-0' }}</p>
+        <p><strong>Seguridad al responder:</strong> {{ resultado.seguridadCalificacion | percent: '1.0-0' }}</p>
+        @if (resultado.claridadRespuestas != null) { <p><strong>Claridad de respuestas:</strong> {{ resultado.claridadRespuestas }} %</p> }
+        @if (resultado.dominioTema != null) { <p><strong>Dominio del tema:</strong> {{ resultado.dominioTema }} %</p> }
+        @if (resultado.nivelComunicacion) { <p><strong>Nivel de comunicación:</strong> {{ resultado.nivelComunicacion }}</p> }
         <p><strong>Tiempo promedio de respuesta:</strong> {{ resultado.tiempoPromedioRespuesta | number: '1.0-1' }} segundos</p>
         <p><strong>Evaluador:</strong> {{ resultado.nombreEspecialista || 'Sin asignar' }}</p>
-        <h3>Respuesta y observaciones del evaluador</h3>
-        <p class="result-feedback">{{ resultado.resumenFeedback }}</p>
-        <h3>Indicaciones de evaluación (PDF)</h3>
-        @if (!resultado.idArchivoPdf) {
-          <p class="muted">El evaluador no adjuntó un PDF en esta evaluación.</p>
-        } @else if (cargandoPdf) {
-          <p class="muted" role="status">Cargando PDF…</p>
-        } @else if (errorPdf) {
-          <p role="alert">{{ errorPdf }}</p>
-        } @else if (urlPdf) {
-          <p class="pdf-actions">
-            <a class="primary-link" [href]="urlPdf" target="_blank" rel="noopener">Ver PDF</a>
-            <a class="secondary-link" [href]="urlPdf" [attr.download]="'indicaciones-evaluacion-' + resultado.idSimulacion + '.pdf'">Descargar PDF</a>
-          </p>
+        @if (resultado.oportunidadesMejora) {
+          <h3>Oportunidades de mejora</h3>
+          <p class="result-feedback">{{ resultado.oportunidadesMejora }}</p>
+        }
+        @if (resultado.recomendaciones) {
+          <h3>Recomendaciones</h3>
+          <p class="result-feedback">{{ resultado.recomendaciones }}</p>
+        }
+        @if (resultado.resumenFeedback) {
+          <h3>Respuesta y observaciones del evaluador</h3>
+          <p class="result-feedback">{{ resultado.resumenFeedback }}</p>
+        }
+        @if (resultado.idArchivoPdf) {
+          <h3>Retroalimentación en PDF</h3>
+          @if (cargandoPdf) {
+            <p class="muted" role="status">Cargando PDF…</p>
+          } @else if (errorPdf) {
+            <p role="alert">{{ errorPdf }}</p>
+          } @else if (urlPdf) {
+            <p class="pdf-actions">
+              <a class="primary-link" [href]="urlPdf" target="_blank" rel="noopener">Ver PDF</a>
+              <a class="secondary-link" [href]="urlPdf" [attr.download]="'retroalimentacion-practica-' + resultado.idSimulacion + '.pdf'">Descargar retroalimentación PDF</a>
+            </p>
+          }
         }
         <a routerLink="/historial" class="secondary-link">← Volver al historial</a>
       </div>

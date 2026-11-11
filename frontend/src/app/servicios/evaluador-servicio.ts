@@ -29,14 +29,12 @@ export class EvaluadorServicio {
     return this.http.get<RespuestaEntrevista[]>(`${API_BASE_URL}/respuestas-entrevista/simulacion/${idSimulacion}`);
   }
 
-  /** US06: registra la evaluación; el backend asigna como especialista al evaluador conectado. */
-  registrarEvaluacion(datos: EvaluacionRequest, pdf?: File | null): Observable<EvaluacionSimulacion> {
-    if (!pdf) return this.http.post<EvaluacionSimulacion>(`${API_BASE_URL}/evaluacion-simulacion`, datos);
-    // Con PDF de indicaciones se envía multipart: la evaluación como JSON y el archivo aparte.
-    const formulario = new FormData();
-    formulario.append('evaluacion', new Blob([JSON.stringify(datos)], { type: 'application/json' }));
-    formulario.append('pdf', pdf, pdf.name);
-    return this.http.post<EvaluacionSimulacion>(`${API_BASE_URL}/evaluacion-simulacion`, formulario);
+  /**
+   * US06: registra la evaluación. El backend asigna como especialista al evaluador conectado,
+   * calcula el puntaje general, genera el PDF de retroalimentación y marca la entrevista como evaluada.
+   */
+  registrarEvaluacion(datos: EvaluacionRequest): Observable<EvaluacionSimulacion> {
+    return this.http.post<EvaluacionSimulacion>(`${API_BASE_URL}/evaluacion-simulacion`, datos);
   }
 
   /** US21: evaluaciones hechas por el evaluador conectado. */

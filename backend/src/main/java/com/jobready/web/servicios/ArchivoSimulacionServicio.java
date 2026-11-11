@@ -28,7 +28,6 @@ public class ArchivoSimulacionServicio implements Serializable {
     public static final String TIPO_VIDEO = "video";
     public static final String TIPO_PDF_EVALUACION = "pdf_evaluacion";
     private static final long MAX_VIDEO_BYTES = 100L * 1024 * 1024;
-    private static final long MAX_PDF_BYTES = 10L * 1024 * 1024;
 
     @Autowired
     private ArchivoSimulacionRepositorio archivoSimulacionRepositorio;
@@ -65,22 +64,6 @@ public class ArchivoSimulacionServicio implements Serializable {
             throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "El video supera los 100 MB permitidos");
         }
         return leerBytes(video);
-    }
-
-    /** Lee y valida el PDF con las indicaciones de evaluación. */
-    public byte[] leerPdf(MultipartFile pdf) {
-        if (pdf == null || pdf.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El PDF está vacío");
-        }
-        if (pdf.getSize() > MAX_PDF_BYTES) {
-            throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "El PDF supera los 10 MB permitidos");
-        }
-        byte[] bytes = leerBytes(pdf);
-        // Se comprueba la firma del archivo, no solo la extensión o el tipo declarado por el navegador.
-        if (bytes.length < 5 || !new String(bytes, 0, 5, java.nio.charset.StandardCharsets.US_ASCII).equals("%PDF-")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El archivo adjunto no es un PDF válido");
-        }
-        return bytes;
     }
 
     public String calcularHash(byte[] bytes) {

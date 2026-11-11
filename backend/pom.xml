@@ -81,6 +81,18 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Genera el informe PDF de retroalimentacion que el evaluador envia al candidato -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>3.0.5</version>
+        </dependency>
+        <!-- Fuente Liberation Sans embebida en el PDF: conserva tildes, enies y cualquier caracter del texto del evaluador -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf-fonts-extra</artifactId>
+            <version>3.0.5</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

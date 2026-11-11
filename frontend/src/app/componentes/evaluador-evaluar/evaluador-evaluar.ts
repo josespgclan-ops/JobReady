@@ -10,8 +10,8 @@ import { EvaluadorServicio } from '../../servicios/evaluador-servicio';
 import { PanelRolLayout } from '../panel-rol-layout/panel-rol-layout';
 
 /**
- * US05 y US06: el evaluador lee las respuestas de una práctica y registra la rúbrica.
- * El tiempo promedio se calcula a partir de la duración de las respuestas.
+ * US05 y US06: el evaluador revisa el video o las respuestas de una práctica y registra la rúbrica:
+ * tres porcentajes y dos textos. El puntaje general es el promedio de los porcentajes y no se edita.
  */
 @Component({
   selector: 'app-evaluador-evaluar',
@@ -26,8 +26,6 @@ export class EvaluadorEvaluar implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
-  protected readonly niveles = ['Básico', 'Intermedio', 'Avanzado'];
-
   protected idSimulacion = 0;
   protected simulacion: SimulacionDetalle | null = null;
   protected respuestas: RespuestaEntrevista[] = [];
@@ -36,18 +34,18 @@ export class EvaluadorEvaluar implements OnInit, OnDestroy {
   protected error = '';
   protected intentoEnviar = false;
 
-  // Video enviado por el candidato y PDF opcional de indicaciones.
+  // Video enviado por el candidato.
   protected urlVideo = '';
   protected tieneVideo = false;
   protected errorVideo = '';
-  protected pdf: File | null = null;
-  protected errorPdf = '';
 
   // Rúbrica
-  protected puntaje: number | null = null;
-  protected nivel = '';
+  protected readonly maxTexto = 4000;
   protected seguridad: number | null = null;
-  protected feedback = '';
+  protected claridad: number | null = null;
+  protected dominio: number | null = null;
+  protected oportunidades = '';
+  protected recomendaciones = '';
 
   ngOnInit(): void {
     this.idSimulacion = Number(this.route.snapshot.paramMap.get('id'));
@@ -80,26 +78,7 @@ export class EvaluadorEvaluar implements OnInit, OnDestroy {
     });
   }
 
-  protected seleccionarPdf(evento: Event): void {
-    const entrada = evento.target as HTMLInputElement;
-    const archivo = entrada.files?.[0] ?? null;
-    this.errorPdf = '';
-    if (archivo && (archivo.type !== 'application/pdf' && !archivo.name.toLowerCase().endsWith('.pdf'))) {
-      this.errorPdf = 'Selecciona un archivo PDF.';
-      entrada.value = '';
-      this.pdf = null;
-      return;
-    }
-    if (archivo && archivo.size > 10 * 1024 * 1024) {
-      this.errorPdf = 'El PDF no puede superar los 10 MB.';
-      entrada.value = '';
-      this.pdf = null;
-      return;
-    }
-    this.pdf = archivo;
-  }
-
-  /** Promedio en segundos de las respuestas; si la práctica es solo un video, su duración. */
+  /** Promedio en segundos de las respuestas; si la práctica es solo un video, su duración (el backend calcula lo mismo). */
   protected get tiempoPromedio(): number {
     const tiempos = this.respuestas.map((r) => r.duracionSegundos ?? 0).filter((t) => t > 0);
     if (!tiempos.length) return this.tieneVideo ? (this.simulacion?.duracionSegundos ?? 0) : 0;
@@ -110,33 +89,39 @@ export class EvaluadorEvaluar implements OnInit, OnDestroy {
     if (this.urlVideo) URL.revokeObjectURL(this.urlVideo);
   }
 
-  protected get puntajeInvalido(): boolean {
-    return this.puntaje === null || this.puntaje < 0 || this.puntaje > 100;
+  /** Porcentaje entero entre 0 y 100. */
+  protected porcentajeInvalido(valor: number | null): boolean {
+    return valor === null || !Number.isInteger(valor) || valor < 0 || valor > 100;
   }
-  protected get seguridadInvalida(): boolean {
-    return this.seguridad === null || this.seguridad < 0 || this.seguridad > 100;
+
+  protected textoInvalido(texto: string): boolean {
+    return !texto.trim() || texto.trim().length > this.maxTexto;
   }
-  protected get feedbackInvalido(): boolean {
-    return this.feedback.trim().length < 20;
+
+  /** Puntaje general: promedio de los tres porcentajes redondeado (mismo cálculo que el backend). */
+  protected get puntajeGeneral(): number | null {
+    if ([this.seguridad, this.claridad, this.dominio].some((v) => this.porcentajeInvalido(v))) return null;
+    return Math.round((this.seguridad! + this.claridad! + this.dominio!) / 3);
   }
 
   protected enviar(): void {
     this.intentoEnviar = true;
     this.error = '';
     // US06 escenario 2: si falta un criterio, no se envía y se resalta.
-    if (this.puntajeInvalido || this.seguridadInvalida || !this.nivel || this.feedbackInvalido) {
-      this.error = 'Completa todos los criterios de la rúbrica antes de enviar.';
+    if (this.puntajeGeneral === null || this.textoInvalido(this.oportunidades) || this.textoInvalido(this.recomendaciones)) {
+      this.error = 'Completa todos los campos de la rúbrica: porcentajes enteros entre 0 y 100 y los dos textos.';
       return;
     }
+    if (this.enviando) return;
     this.enviando = true;
     this.servicio.registrarEvaluacion({
       idSimulacion: this.idSimulacion,
-      puntajeGeneral: Math.round(this.puntaje!),
-      nivelComunicacion: this.nivel,
-      tiempoPromedioRespuesta: this.tiempoPromedio,
-      seguridadCalificacion: Math.round(this.seguridad!) / 100,
-      feedbackResumen: this.feedback.trim(),
-    }, this.pdf).subscribe({
+      seguridadRespuestas: this.seguridad!,
+      claridadRespuestas: this.claridad!,
+      dominioTema: this.dominio!,
+      oportunidadesMejora: this.oportunidades.trim(),
+      recomendaciones: this.recomendaciones.trim(),
+    }).subscribe({
       next: () => void this.router.navigate(['/evaluador/evaluaciones'], { queryParams: { registrada: this.idSimulacion } }),
       error: (respuesta: HttpErrorResponse) => {
         this.enviando = false;

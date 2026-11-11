@@ -24,4 +24,6 @@ public class EnvioEntrevistaDTO {
     private String estadoRevision;
     private Integer idArchivoVideo;
     private LocalDateTime fechaEvaluacion;
+    /** PDF de retroalimentación del evaluador; null si la práctica no fue evaluada o no tiene PDF. */
+    private Integer idArchivoPdf;
 }

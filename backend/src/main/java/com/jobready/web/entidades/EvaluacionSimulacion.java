@@ -21,12 +21,24 @@ public class EvaluacionSimulacion {
     private Simulacion simulacion;
     @Column(name = "puntaje_general", nullable = false)
     private Integer puntajeGeneral;
-    @Column(name = "nivel_comunicacion", nullable = false, length = 20)
+    /** Solo lo tienen las evaluaciones anteriores a la rúbrica de tres porcentajes. */
+    @Column(name = "nivel_comunicacion", length = 20)
     private String nivelComunicacion;
     @Column(name = "tiempo_promedio_respuesta", nullable = false, precision = 4, scale = 1)
     private BigDecimal tiempoPromedioRespuesta;
+    /** Seguridad al responder, de 0 a 1 (0.85 = 85 %). */
     @Column(name = "seguridad_calificacion", nullable = false, precision = 3, scale = 2)
     private BigDecimal seguridadCalificacion;
+    /** Claridad de respuestas (0 a 100 %). */
+    @Column(name = "claridad_respuestas")
+    private Integer claridadRespuestas;
+    /** Dominio del tema (0 a 100 %). */
+    @Column(name = "dominio_tema")
+    private Integer dominioTema;
+    @Column(name = "oportunidades_mejora", columnDefinition = "TEXT")
+    private String oportunidadesMejora;
+    @Column(name = "recomendaciones", columnDefinition = "TEXT")
+    private String recomendaciones;
     @Column(name = "feedback_resumen", columnDefinition = "TEXT")
     private String feedbackResumen;
     @Column(name = "evaluado_por_especialista")

@@ -110,7 +110,7 @@ public class SimulacionServicio implements Serializable {
             // Dos envíos simultáneos del mismo video: el índice único sobre el hash rechaza el segundo.
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Este video ya fue enviado");
         }
-        return aEnvio(simulacion, archivo, null);
+        return aEnvio(simulacion, archivo, null, null);
     }
 
     /** Evaluador activo con menos entrevistas asignadas sin evaluar; null si no hay evaluadores activos. */
@@ -127,18 +127,26 @@ public class SimulacionServicio implements Serializable {
                 .findBySimulacion_Usuario_UsernameAndTipoArchivo(username, ArchivoSimulacionServicio.TIPO_VIDEO)
                 .stream()
                 .collect(Collectors.toMap(a -> a.getSimulacion().getIdSimulacion(), Function.identity(), (a, b) -> a));
+        Map<Integer, ArchivoSimulacion> pdfs = archivoSimulacionRepositorio
+                .findBySimulacion_Usuario_UsernameAndTipoArchivo(username, ArchivoSimulacionServicio.TIPO_PDF_EVALUACION)
+                .stream()
+                // Si hubiera más de uno, se ofrece el más reciente.
+                .collect(Collectors.toMap(a -> a.getSimulacion().getIdSimulacion(), Function.identity(),
+                        (a, b) -> a.getFechaCreacion().isAfter(b.getFechaCreacion()) ? a : b));
         Map<Integer, EvaluacionSimulacion> evaluaciones = evaluacionSimulacionRepositorio
                 .findBySimulacion_Usuario_Username(username)
                 .stream()
                 .collect(Collectors.toMap(e -> e.getSimulacion().getIdSimulacion(), Function.identity(), (a, b) -> a));
         return simulacionRepositorio.findByUsuario_UsernameOrderByFechaInicioDesc(username).stream()
-                .map(s -> aEnvio(s, videos.get(s.getIdSimulacion()), evaluaciones.get(s.getIdSimulacion())))
+                .map(s -> aEnvio(s, videos.get(s.getIdSimulacion()), evaluaciones.get(s.getIdSimulacion()),
+                        pdfs.get(s.getIdSimulacion())))
                 .sorted(Comparator.comparing(EnvioEntrevistaDTO::getFechaEnvio,
                         Comparator.nullsLast(Comparator.reverseOrder())))
                 .toList();
     }
 
-    private EnvioEntrevistaDTO aEnvio(Simulacion s, ArchivoSimulacion video, EvaluacionSimulacion evaluacion) {
+    private EnvioEntrevistaDTO aEnvio(Simulacion s, ArchivoSimulacion video, EvaluacionSimulacion evaluacion,
+                                      ArchivoSimulacion pdf) {
         String estadoRevision;
         if (evaluacion != null) estadoRevision = "REVISADA";
         else if ("finalizada".equalsIgnoreCase(s.getEstado())) estadoRevision = "PENDIENTE";
@@ -155,7 +163,8 @@ public class SimulacionServicio implements Serializable {
                 s.getEstado(),
                 estadoRevision,
                 video != null ? video.getIdArchivo() : null,
-                evaluacion != null ? evaluacion.getFechaEvaluacion() : null);
+                evaluacion != null ? evaluacion.getFechaEvaluacion() : null,
+                evaluacion != null && pdf != null ? pdf.getIdArchivo() : null);
     }
 
     public List<Simulacion> listarPorUsuario(String username) {

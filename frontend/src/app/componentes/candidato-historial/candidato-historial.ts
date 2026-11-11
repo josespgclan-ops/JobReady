@@ -26,6 +26,10 @@ export class CandidatoHistorialComponente implements OnInit, OnDestroy {
   protected cargandoVideo = false;
   protected errorVideo = '';
 
+  /** Práctica cuyo PDF se está descargando y error de descarga (por práctica). */
+  protected descargandoPdf: number | null = null;
+  protected errorPdf: { idSimulacion: number; mensaje: string } | null = null;
+
   ngOnInit(): void {
     this.simulacionesServicio.listarMisEnvios().subscribe({
       next: (envios) => {
@@ -41,7 +45,7 @@ export class CandidatoHistorialComponente implements OnInit, OnDestroy {
 
   protected textoEstado(envio: EnvioEntrevista): string {
     switch (envio.estadoRevision) {
-      case 'REVISADA': return 'Revisada';
+      case 'REVISADA': return 'Evaluada';
       case 'PENDIENTE': return 'Pendiente de revisión';
       default: return 'En curso';
     }
@@ -67,6 +71,33 @@ export class CandidatoHistorialComponente implements OnInit, OnDestroy {
       error: () => {
         this.errorVideo = 'No se pudo cargar el video.';
         this.cargandoVideo = false;
+      },
+    });
+  }
+
+  /**
+   * Descarga el PDF de retroalimentación. Se pide con HttpClient para enviar el token: el backend
+   * solo entrega el archivo si la práctica pertenece al candidato conectado.
+   */
+  protected descargarPdf(envio: EnvioEntrevista): void {
+    if (!envio.idArchivoPdf || this.descargandoPdf !== null) return;
+    this.descargandoPdf = envio.idSimulacion;
+    this.errorPdf = null;
+    this.simulacionesServicio.descargarArchivo(envio.idArchivoPdf).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+        const enlace = document.createElement('a');
+        enlace.href = url;
+        const carrera = (envio.nombreCarrera ?? 'entrevista').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
+        enlace.download = `retroalimentacion-${carrera}-practica-${envio.numeroSimulacion ?? envio.idSimulacion}.pdf`;
+        enlace.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        this.descargandoPdf = null;
+      },
+      error: () => {
+        this.errorPdf = { idSimulacion: envio.idSimulacion, mensaje: 'No se pudo descargar el PDF.' };
+        this.descargandoPdf = null;
       },
     });
   }

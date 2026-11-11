@@ -1,6 +1,10 @@
 -- Datos iniciales de JobReady para PostgreSQL.
 -- El script es idempotente: puede ejecutarse en cada arranque sin duplicar registros.
 
+-- La rubrica de evaluacion usa tres porcentajes; el nivel de comunicacion queda solo en las evaluaciones antiguas.
+-- ddl-auto=update no quita restricciones NOT NULL existentes, por eso se hace aqui (repetirlo no tiene efecto).
+ALTER TABLE evaluaciones_simulacion ALTER COLUMN nivel_comunicacion DROP NOT NULL;
+
 INSERT INTO roles (nombre, descripcion)
 VALUES
     ('ADMIN', 'Administra usuarios, roles y preguntas'),

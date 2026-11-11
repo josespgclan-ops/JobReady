@@ -22,6 +22,13 @@ public class ResultadoSimulacionDTO {
     private String nombreEspecialista;
     /** Fecha en que el evaluador envió los resultados. */
     private LocalDateTime fechaEvaluacion;
-    /** PDF con las indicaciones de evaluación; null si el evaluador no adjuntó ninguno. */
+    /** PDF de retroalimentación generado al enviar la evaluación; null en evaluaciones antiguas sin PDF. */
     private Integer idArchivoPdf;
+    private String nombreCandidato;
+    /** Claridad de respuestas (%); null en evaluaciones anteriores a la rúbrica de tres porcentajes. */
+    private Integer claridadRespuestas;
+    /** Dominio del tema (%). */
+    private Integer dominioTema;
+    private String oportunidadesMejora;
+    private String recomendaciones;
 }

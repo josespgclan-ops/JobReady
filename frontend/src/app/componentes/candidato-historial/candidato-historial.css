@@ -15,3 +15,4 @@ button.secondary-link:hover,a.secondary-link:hover{text-decoration:underline}
 .video-panel-heading h2{margin:0;font-size:1.05rem}
 .video-panel video{display:block;width:min(100%,720px);max-height:420px;background:#111;border-radius:10px}
 @media(max-width:700px){.history-row{grid-template-columns:1fr 1fr}.history-row .history-cell:nth-of-type(n+2){grid-column:auto}}
+.report-actions{display:flex;flex-direction:column;align-items:flex-start;gap:6px}.report-actions button:disabled{opacity:.6;cursor:default}.report-error{color:#b42318;font-weight:700}

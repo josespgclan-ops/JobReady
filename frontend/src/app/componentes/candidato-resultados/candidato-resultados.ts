@@ -22,7 +22,7 @@ export class CandidatoResultadosComponente implements OnInit, OnDestroy {
   protected cargando = false;
   protected error = '';
 
-  /** PDF de indicaciones: se descarga con el token y se ofrece como URL local. */
+  /** PDF de retroalimentación: se descarga con el token y se ofrece como URL local. */
   protected urlPdf = '';
   protected cargandoPdf = false;
   protected errorPdf = '';
@@ -65,7 +65,7 @@ export class CandidatoResultadosComponente implements OnInit, OnDestroy {
         this.cargandoPdf = false;
       },
       error: () => {
-        this.errorPdf = 'No se pudo cargar el PDF adjunto.';
+        this.errorPdf = 'No se pudo cargar el PDF de retroalimentación.';
         this.cargandoPdf = false;
       },
     });

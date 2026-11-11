@@ -43,38 +43,42 @@
         <form class="box-body" (ngSubmit)="enviar()" novalidate>
           @if (error) { <p class="notice err" role="alert">{{ error }}</p> }
           <div class="form-grid">
-            <div class="field" [class.invalid]="intentoEnviar && puntajeInvalido">
-              <label for="puntaje">Puntaje general (0 a 100)</label>
-              <input id="puntaje" name="puntaje" type="number" min="0" max="100" [(ngModel)]="puntaje" required>
-              @if (intentoEnviar && puntajeInvalido) { <span class="error">Ingresa un número entre 0 y 100.</span> }
-            </div>
-            <div class="field" [class.invalid]="intentoEnviar && seguridadInvalida">
+            <div class="field" [class.invalid]="intentoEnviar && porcentajeInvalido(seguridad)">
               <label for="seguridad">Seguridad al responder (%)</label>
-              <input id="seguridad" name="seguridad" type="number" min="0" max="100" [(ngModel)]="seguridad" required>
-              @if (intentoEnviar && seguridadInvalida) { <span class="error">Ingresa un porcentaje entre 0 y 100.</span> }
+              <input id="seguridad" name="seguridad" type="number" min="0" max="100" step="1" inputmode="numeric" [(ngModel)]="seguridad" required>
+              @if (intentoEnviar && porcentajeInvalido(seguridad)) { <span class="error">Ingresa un número entero entre 0 y 100.</span> }
             </div>
-            <div class="field full" [class.invalid]="intentoEnviar && !nivel">
-              <label for="nivel">Nivel de comunicación</label>
-              <select id="nivel" name="nivel" [(ngModel)]="nivel" required>
-                <option value="" disabled>Selecciona un nivel</option>
-                @for (n of niveles; track n) { <option [value]="n">{{ n }}</option> }
-              </select>
-              @if (intentoEnviar && !nivel) { <span class="error">Selecciona el nivel de comunicación.</span> }
+            <div class="field" [class.invalid]="intentoEnviar && porcentajeInvalido(claridad)">
+              <label for="claridad">Claridad de respuestas (%)</label>
+              <input id="claridad" name="claridad" type="number" min="0" max="100" step="1" inputmode="numeric" [(ngModel)]="claridad" required>
+              @if (intentoEnviar && porcentajeInvalido(claridad)) { <span class="error">Ingresa un número entero entre 0 y 100.</span> }
             </div>
-            <div class="field full" [class.invalid]="intentoEnviar && feedbackInvalido">
-              <label for="feedback">Retroalimentación para el candidato</label>
-              <textarea id="feedback" name="feedback" [(ngModel)]="feedback" required
-                        placeholder="Qué hizo bien y qué puede mejorar en su próxima práctica."></textarea>
-              <span class="hint">{{ feedback.trim().length }} caracteres · mínimo 20</span>
-              @if (intentoEnviar && feedbackInvalido) { <span class="error">Escribe al menos 20 caracteres de retroalimentación.</span> }
+            <div class="field" [class.invalid]="intentoEnviar && porcentajeInvalido(dominio)">
+              <label for="dominio">Dominio del tema (%)</label>
+              <input id="dominio" name="dominio" type="number" min="0" max="100" step="1" inputmode="numeric" [(ngModel)]="dominio" required>
+              @if (intentoEnviar && porcentajeInvalido(dominio)) { <span class="error">Ingresa un número entero entre 0 y 100.</span> }
             </div>
-            <div class="field full">
-              <label for="pdf-indicaciones">PDF con indicaciones para el candidato (opcional)</label>
-              <input id="pdf-indicaciones" name="pdf" type="file" accept="application/pdf,.pdf" (change)="seleccionarPdf($event)">
-              <span class="hint">{{ pdf ? pdf.name : 'Máximo 10 MB.' }}</span>
-              @if (errorPdf) { <span class="error">{{ errorPdf }}</span> }
+            <div class="field">
+              <span class="label-like" id="puntaje-label">Puntaje general</span>
+              <output class="score-output" aria-labelledby="puntaje-label" aria-live="polite">{{ puntajeGeneral ?? '—' }}<small> /100</small></output>
+              <span class="hint">Promedio automático de los tres porcentajes.</span>
+            </div>
+            <div class="field full" [class.invalid]="intentoEnviar && textoInvalido(oportunidades)">
+              <label for="oportunidades">Oportunidades de mejora</label>
+              <textarea id="oportunidades" name="oportunidades" [(ngModel)]="oportunidades" required [attr.maxlength]="maxTexto"
+                        placeholder="Aspectos concretos que el candidato puede mejorar."></textarea>
+              <span class="hint">{{ oportunidades.trim().length }} / {{ maxTexto }} caracteres</span>
+              @if (intentoEnviar && textoInvalido(oportunidades)) { <span class="error">Escribe las oportunidades de mejora.</span> }
+            </div>
+            <div class="field full" [class.invalid]="intentoEnviar && textoInvalido(recomendaciones)">
+              <label for="recomendaciones">Recomendaciones</label>
+              <textarea id="recomendaciones" name="recomendaciones" [(ngModel)]="recomendaciones" required [attr.maxlength]="maxTexto"
+                        placeholder="Qué puede hacer el candidato para prepararse mejor."></textarea>
+              <span class="hint">{{ recomendaciones.trim().length }} / {{ maxTexto }} caracteres</span>
+              @if (intentoEnviar && textoInvalido(recomendaciones)) { <span class="error">Escribe las recomendaciones.</span> }
             </div>
           </div>
+          <p class="muted">Al enviar se genera automáticamente un PDF con esta retroalimentación para el candidato.</p>
           <div class="actions">
             <button class="btn primary" type="submit" [disabled]="enviando || (respuestas.length === 0 && !tieneVideo)">{{ enviando ? 'Enviando…' : 'Enviar evaluación' }}</button>
             <a class="btn ghost" routerLink="/evaluador/pendientes">Cancelar</a>

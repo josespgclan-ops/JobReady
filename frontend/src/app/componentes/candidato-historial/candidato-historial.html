@@ -45,8 +45,16 @@
             </span>
             <span class="history-cell">
               @if (envio.estadoRevision === 'REVISADA') {
-                <a class="secondary-link" routerLink="/resultados" [queryParams]="{ idSimulacion: envio.idSimulacion }"
-                   [attr.aria-label]="'Ver informe de ' + (envio.nombreCarrera ?? 'la entrevista')">Ver informe</a>
+                <span class="report-actions">
+                  <a class="secondary-link" routerLink="/resultados" [queryParams]="{ idSimulacion: envio.idSimulacion }"
+                     [attr.aria-label]="'Ver informe de ' + (envio.nombreCarrera ?? 'la entrevista')">Ver informe</a>
+                  @if (envio.idArchivoPdf) {
+                    <button type="button" class="secondary-link" (click)="descargarPdf(envio)" [disabled]="descargandoPdf !== null"
+                            [attr.aria-label]="'Descargar retroalimentación PDF de ' + (envio.nombreCarrera ?? 'la entrevista')">
+                      {{ descargandoPdf === envio.idSimulacion ? 'Descargando…' : 'Descargar retroalimentación PDF' }}</button>
+                  }
+                  @if (errorPdf?.idSimulacion === envio.idSimulacion) { <small class="report-error" role="alert">{{ errorPdf?.mensaje }}</small> }
+                </span>
               } @else {
                 <span class="muted">Pendiente</span>
               }
