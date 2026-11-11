@@ -147,3 +147,47 @@ export interface CarreraRequest {
   descripcion: string;
   activo: boolean;
 }
+
+/* ---------- Datos propios del candidato ---------- */
+// Se declaran como `type` para que encajen en los métodos genéricos de ApiRecurso (RegistroApi).
+
+/** Carrera elegida por el candidato (GET /api/usuarios-carreras). */
+export type UsuarioCarrera = {
+  id: { idUsuario: number; idCarrera: number };
+  carrera: Carrera;
+  fechaSeleccion?: string | null;
+};
+
+/** Sesión de práctica que organiza el candidato. */
+export type SesionProgramada = {
+  idSesion: number;
+  carrera?: Carrera | null;
+  fechaProgramada: string;
+  horaProgramada: string;
+  estado?: string | null;
+  recordatorioEnviado?: boolean | null;
+};
+
+export type SesionProgramadaRequest = {
+  idCarrera: number | null;
+  fechaProgramada: string;
+  horaProgramada: string;
+};
+
+export type CalificacionEncuesta = 'Excelente' | 'Bueno' | 'Regular' | 'Malo';
+
+export type EncuestaSatisfaccion = {
+  idEncuesta: number;
+  satisfaccionGeneral: number;
+  calificacionServicio: CalificacionEncuesta;
+  calidadProducto: CalificacionEncuesta;
+  comentarioAdicional?: string | null;
+  fechaEnvio?: string | null;
+};
+
+export type EncuestaSatisfaccionRequest = {
+  satisfaccionGeneral: number;
+  calificacionServicio: CalificacionEncuesta;
+  calidadProducto: CalificacionEncuesta;
+  comentarioAdicional: string;
+};

@@ -2,16 +2,44 @@
   <section class="survey-container" aria-labelledby="survey-title">
     <p class="survey-badge">☆ PORTAL DE OPINIÓN</p>
     <h1 id="survey-title" class="page-title">Encuesta de satisfacción</h1>
-    <p class="page-intro">Después de recibir un informe podrás contarnos qué tan útil fue la retroalimentación.</p>
-    <p class="info-note">Vista previa del formulario. El envío se habilitará cuando una evaluación publicada esté vinculada a tu cuenta.</p>
-    <form class="survey-form" aria-label="Vista previa de encuesta">
-      <fieldset disabled>
+    <p class="page-intro">Cuéntanos qué tan útil te resulta JobReady y la retroalimentación de los evaluadores.</p>
+    <form class="survey-form" (ngSubmit)="enviar()" novalidate>
+      <fieldset [disabled]="enviando">
         <legend>Tu opinión sobre JobReady</legend>
-        <div class="survey-block"><label class="form-label">¿Cuál es tu nivel de satisfacción general?</label><div class="stars-preview" aria-hidden="true">☆ ☆ ☆ ☆ ☆</div></div>
-        <div class="survey-block"><label class="form-label" for="servicio">¿Cómo calificarías nuestro servicio?</label><select id="servicio" class="form-control"><option>Selecciona una opción</option><option>Excelente</option><option>Bueno</option><option>Regular</option><option>Malo</option></select></div>
-        <div class="survey-block"><label class="form-label" for="comentario">¿Tienes algún comentario adicional?</label><textarea id="comentario" class="form-control" rows="4" placeholder="Escribe aquí tus sugerencias"></textarea></div>
-        <button type="button" class="survey-submit">Enviar encuesta</button>
+        <div class="survey-block" [class.invalid]="intento && satisfaccion < 1">
+          <span class="form-label" id="etiqueta-estrellas">¿Cuál es tu nivel de satisfacción general?</span>
+          <div class="stars" role="radiogroup" aria-labelledby="etiqueta-estrellas">
+            @for (n of estrellas; track n) {
+              <button type="button" class="star" role="radio" [class.on]="n <= satisfaccion" [attr.aria-checked]="n === satisfaccion"
+                      [attr.aria-label]="n + (n === 1 ? ' estrella' : ' estrellas')" (click)="satisfaccion = n">★</button>
+            }
+          </div>
+        </div>
+        <div class="survey-block" [class.invalid]="intento && !servicio">
+          <label class="form-label" for="servicio">¿Cómo calificarías nuestro servicio?</label>
+          <select id="servicio" name="servicio" class="form-control" [(ngModel)]="servicio">
+            <option value="" disabled>Selecciona una opción</option>
+            @for (c of calificaciones; track c) { <option [value]="c">{{ c }}</option> }
+          </select>
+        </div>
+        <div class="survey-block" [class.invalid]="intento && !calidad">
+          <label class="form-label" for="calidad">¿Qué tan útil fue la retroalimentación de los evaluadores?</label>
+          <select id="calidad" name="calidad" class="form-control" [(ngModel)]="calidad">
+            <option value="" disabled>Selecciona una opción</option>
+            @for (c of calificaciones; track c) { <option [value]="c">{{ c }}</option> }
+          </select>
+        </div>
+        <div class="survey-block">
+          <label class="form-label" for="comentario">¿Tienes algún comentario adicional?</label>
+          <textarea id="comentario" name="comentario" class="form-control" rows="4" maxlength="2000" [(ngModel)]="comentario" placeholder="Escribe aquí tus sugerencias"></textarea>
+        </div>
+        @if (error) { <p class="info-note survey-error" role="alert">{{ error }}</p> }
+        @if (mensaje) { <p class="info-note survey-ok" role="status">{{ mensaje }}</p> }
+        <button type="submit" class="survey-submit">{{ enviando ? 'Enviando…' : 'Enviar encuesta' }}</button>
       </fieldset>
     </form>
+    @if (anteriores.length) {
+      <p class="muted survey-history">Has enviado {{ anteriores.length }} {{ anteriores.length === 1 ? 'encuesta' : 'encuestas' }}; la última el {{ anteriores[0].fechaEnvio | date: 'dd/MM/yyyy HH:mm' }}.</p>
+    }
   </section>
 </app-candidato-layout>

@@ -30,7 +30,13 @@ export class CuentasServicio {
 
   listarUsuariosCarreras<T extends RegistroApi>(): Observable<T[]> { return this.http.get<T[]>(`${API_BASE_URL}/usuarios-carreras`); }
   asociarCarrera<T extends RegistroApi>(datos: Partial<T>): Observable<T> { return this.http.post<T>(`${API_BASE_URL}/usuario-carrera`, datos); }
-  quitarCarrera(idUsuario: number, idCarrera: number): Observable<void> {
-    return this.http.delete<void>(`${API_BASE_URL}/usuario-carrera/${idUsuario}/${idCarrera}`);
+  /** Quita una carrera de las elegidas por el candidato conectado. */
+  quitarCarrera(idCarrera: number): Observable<void> {
+    return this.http.delete<void>(`${API_BASE_URL}/usuario-carrera/${idCarrera}`);
+  }
+
+  /** Encuestas que ya envió el candidato conectado. */
+  listarMisEncuestas<T extends RegistroApi>(): Observable<T[]> {
+    return this.http.get<T[]>(`${API_BASE_URL}/encuestas-satisfaccion/mias`);
   }
 }

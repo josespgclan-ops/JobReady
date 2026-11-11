@@ -1,9 +1,62 @@
 <app-candidato-layout active="comparaciones">
   <h1 class="page-title">Comparación de prácticas</h1>
   <p class="page-intro">Compara tus evaluaciones para ver cómo cambian tus puntuaciones y recomendaciones.</p>
-  <div class="selectors-container">
-    <div><label class="form-label" for="primera">Primera simulación</label><select class="form-control" id="primera" disabled><option>Selecciona una práctica evaluada</option></select></div>
-    <div><label class="form-label" for="segunda">Segunda simulación</label><select class="form-control" id="segunda" disabled><option>Selecciona otra práctica</option></select></div>
-  </div>
-  <section class="content-card"><div class="card-heading">Resultados de la comparación</div><div class="empty-state"><span class="empty-icon" aria-hidden="true">⇄</span><h2>Necesitas dos evaluaciones publicadas</h2><p>La comparación se habilitará cuando el sistema pueda consultar tus evaluaciones personales de forma segura.</p><a routerLink="/historial" class="primary-link">Ver historial</a></div></section>
+
+  @if (cargando) {
+    <p class="info-note" role="status">Cargando tus prácticas evaluadas…</p>
+  } @else if (error) {
+    <p class="info-note" role="alert">{{ error }}</p>
+  } @else if (evaluadas.length < 2) {
+    <section class="content-card"><div class="card-heading">Resultados de la comparación</div><div class="empty-state"><span class="empty-icon" aria-hidden="true">⇄</span><h2>Necesitas dos evaluaciones publicadas</h2><p>Tienes {{ evaluadas.length }} {{ evaluadas.length === 1 ? 'práctica evaluada' : 'prácticas evaluadas' }}. Cuando un evaluador revise otra entrevista podrás compararlas aquí.</p><a routerLink="/historial" class="primary-link">Ver historial</a></div></section>
+  } @else {
+    <div class="selectors-container">
+      <div>
+        <label class="form-label" for="primera">Primera simulación</label>
+        <select class="form-control" id="primera" name="primera" [(ngModel)]="idPrimera" (ngModelChange)="comparar()">
+          @for (e of evaluadas; track e.idSimulacion) { <option [ngValue]="e.idSimulacion">{{ etiqueta(e) }}</option> }
+        </select>
+      </div>
+      <div>
+        <label class="form-label" for="segunda">Segunda simulación</label>
+        <select class="form-control" id="segunda" name="segunda" [(ngModel)]="idSegunda" (ngModelChange)="comparar()">
+          @for (e of evaluadas; track e.idSimulacion) { <option [ngValue]="e.idSimulacion">{{ etiqueta(e) }}</option> }
+        </select>
+      </div>
+    </div>
+
+    <section class="content-card">
+      <div class="card-heading">Resultados de la comparación</div>
+      <div class="card-body">
+        @if (comparando) { <p class="muted" role="status">Cargando resultados…</p> }
+        @if (errorComparacion) { <p class="info-note" role="alert">{{ errorComparacion }}</p> }
+        @if (primera && segunda) {
+          <div class="table-wrap">
+            <table class="compare-table">
+              <thead><tr><th scope="col">Criterio</th><th scope="col">Primera</th><th scope="col">Segunda</th><th scope="col">Cambio</th></tr></thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Puntaje general</th><td>{{ primera.puntajeGeneral }}/100</td><td>{{ segunda.puntajeGeneral }}/100</td>
+                  <td [class.up]="mejora(primera.puntajeGeneral, segunda.puntajeGeneral) === true" [class.down]="mejora(primera.puntajeGeneral, segunda.puntajeGeneral) === false">{{ diferencia(primera.puntajeGeneral, segunda.puntajeGeneral) }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Seguridad</th><td>{{ primera.seguridadCalificacion | percent: '1.0-0' }}</td><td>{{ segunda.seguridadCalificacion | percent: '1.0-0' }}</td>
+                  <td [class.up]="mejora(primera.seguridadCalificacion, segunda.seguridadCalificacion) === true" [class.down]="mejora(primera.seguridadCalificacion, segunda.seguridadCalificacion) === false">{{ diferencia(primera.seguridadCalificacion * 100, segunda.seguridadCalificacion * 100) }} pts</td>
+                </tr>
+                <tr>
+                  <th scope="row">Tiempo promedio de respuesta</th><td>{{ primera.tiempoPromedioRespuesta | number: '1.0-1' }} s</td><td>{{ segunda.tiempoPromedioRespuesta | number: '1.0-1' }} s</td>
+                  <td [class.up]="mejora(primera.tiempoPromedioRespuesta, segunda.tiempoPromedioRespuesta, true) === true" [class.down]="mejora(primera.tiempoPromedioRespuesta, segunda.tiempoPromedioRespuesta, true) === false">{{ diferencia(primera.tiempoPromedioRespuesta, segunda.tiempoPromedioRespuesta, 1) }} s</td>
+                </tr>
+                <tr><th scope="row">Nivel de comunicación</th><td>{{ primera.nivelComunicacion }}</td><td>{{ segunda.nivelComunicacion }}</td><td>{{ primera.nivelComunicacion === segunda.nivelComunicacion ? '=' : '≠' }}</td></tr>
+                <tr><th scope="row">Evaluada el</th><td>{{ primera.fechaEvaluacion ? (primera.fechaEvaluacion | date: 'dd/MM/yyyy') : '—' }}</td><td>{{ segunda.fechaEvaluacion ? (segunda.fechaEvaluacion | date: 'dd/MM/yyyy') : '—' }}</td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="feedback-compare">
+            <article><h3>Observaciones · primera</h3><p>{{ primera.resumenFeedback }}</p></article>
+            <article><h3>Observaciones · segunda</h3><p>{{ segunda.resumenFeedback }}</p></article>
+          </div>
+        }
+      </div>
+    </section>
+  }
 </app-candidato-layout>

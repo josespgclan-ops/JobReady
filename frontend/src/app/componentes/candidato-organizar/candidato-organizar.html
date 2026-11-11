@@ -1,16 +1,53 @@
 <app-candidato-layout active="organizar">
   <h1 class="page-title">Organiza tu próxima sesión</h1>
-  <p class="page-intro">Planifica cuándo te gustaría practicar. La programación estará disponible cuando podamos asociar una sesión a tu cuenta.</p>
+  <p class="page-intro">Planifica cuándo te gustaría practicar. Tus sesiones quedan guardadas en tu cuenta.</p>
   <section class="content-card schedule-card">
     <div class="card-heading">Nueva sesión</div>
-    <div class="card-body">
+    <form class="card-body" (ngSubmit)="programar()" novalidate>
       <div class="schedule-grid">
-        <div><label class="form-label" for="fecha">Fecha</label><input class="form-control" id="fecha" type="date" disabled></div>
-        <div><label class="form-label" for="hora">Hora</label><input class="form-control" id="hora" type="time" disabled></div>
-        <div><label class="form-label" for="carrera">Carrera</label><select class="form-control" id="carrera" disabled><option>Selecciona una carrera</option></select></div>
+        <div><label class="form-label" for="fecha">Fecha</label><input class="form-control" id="fecha" name="fecha" type="date" [min]="hoy" [(ngModel)]="fecha" required></div>
+        <div><label class="form-label" for="hora">Hora</label><input class="form-control" id="hora" name="hora" type="time" [(ngModel)]="hora" required></div>
+        <div>
+          <label class="form-label" for="carrera">Carrera (opcional)</label>
+          <select class="form-control" id="carrera" name="carrera" [(ngModel)]="idCarrera">
+            <option [ngValue]="null">Sin carrera definida</option>
+            @for (carrera of carreras; track carrera.idCarrera) { <option [ngValue]="carrera.idCarrera">{{ carrera.nombre }}</option> }
+          </select>
+        </div>
       </div>
-      <p class="info-note">La programación todavía no está conectada a una cuenta de candidato. Por ahora puedes explorar las preguntas y preparar tu equipo para practicar.</p>
-      <button type="button" class="schedule-button" disabled>Programar sesión</button>
+      @if (errorForm) { <p class="info-note form-error" role="alert">{{ errorForm }}</p> }
+      @if (mensaje) { <p class="info-note form-ok" role="status">{{ mensaje }}</p> }
+      <button type="submit" class="schedule-button" [disabled]="guardando || cargando">{{ guardando ? 'Programando…' : 'Programar sesión' }}</button>
+    </form>
+  </section>
+
+  <section class="content-card sessions-card" aria-labelledby="titulo-sesiones">
+    <div class="card-heading" id="titulo-sesiones">Mis sesiones</div>
+    <div class="card-body">
+      @if (cargando) {
+        <p class="muted" role="status">Cargando tus sesiones…</p>
+      } @else if (error) {
+        <p class="info-note" role="alert">{{ error }}</p>
+      } @else if (sesiones.length === 0) {
+        <p class="muted">Todavía no has programado sesiones.</p>
+      } @else {
+        <ul class="session-list">
+          @for (sesion of proximas; track sesion.idSesion) {
+            <li class="session-row">
+              <span><strong>{{ instanteFecha(sesion) | date: "EEEE dd/MM/yyyy 'a las' HH:mm" }}</strong><small>{{ sesion.carrera?.nombre ?? 'Sin carrera definida' }}</small></span>
+              <span class="session-state upcoming">Programada</span>
+              <button type="button" class="session-cancel" (click)="cancelar(sesion)" [disabled]="cancelando !== null">{{ cancelando === sesion.idSesion ? 'Cancelando…' : 'Cancelar' }}</button>
+            </li>
+          }
+          @for (sesion of anteriores; track sesion.idSesion) {
+            <li class="session-row past">
+              <span><strong>{{ instanteFecha(sesion) | date: "dd/MM/yyyy HH:mm" }}</strong><small>{{ sesion.carrera?.nombre ?? 'Sin carrera definida' }}</small></span>
+              <span class="session-state">{{ textoEstado(sesion) }}</span>
+              <span></span>
+            </li>
+          }
+        </ul>
+      }
     </div>
   </section>
 </app-candidato-layout>

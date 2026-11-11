@@ -7,13 +7,15 @@
     <div class="card-body">
       <label class="form-label" for="buscar-carrera">Buscar carrera</label>
       <input class="form-control search-input" id="buscar-carrera" type="search" placeholder="Escribe el nombre de una carrera" [(ngModel)]="busqueda">
+      <label class="only-mine"><input type="checkbox" [(ngModel)]="soloMias" name="soloMias"> Mostrar solo mis carreras ({{ elegidas.size }})</label>
       @if (cargando) { <p class="info-note" role="status">Cargando carreras…</p> }
       @if (error) { <p class="info-note" role="alert">{{ error }}</p> }
+      @if (errorGuardar) { <p class="info-note" role="alert">{{ errorGuardar }}</p> }
       @if (!cargando && !error) {
         @if (carrerasFiltradas.length) {
           <div class="careers-grid">
             @for (carrera of carrerasFiltradas; track carrera.idCarrera) {
-              <article class="career-card"><span class="career-icon" aria-hidden="true">▣</span><div><h2>{{ carrera.nombre }}</h2>@if (carrera.descripcion) { <p>{{ carrera.descripcion }}</p> }<a routerLink="/preguntas" [queryParams]="{ carrera: carrera.idCarrera }">Ver preguntas →</a></div></article>
+              <article class="career-card"><span class="career-icon" aria-hidden="true">▣</span><div><h2>{{ carrera.nombre }}</h2>@if (carrera.descripcion) { <p>{{ carrera.descripcion }}</p> }<div class="career-actions"><button type="button" class="career-toggle" [class.chosen]="elegidas.has(carrera.idCarrera)" (click)="alternar(carrera)" [disabled]="guardando !== null" [attr.aria-pressed]="elegidas.has(carrera.idCarrera)">{{ guardando === carrera.idCarrera ? 'Guardando…' : elegidas.has(carrera.idCarrera) ? '✓ Elegida' : 'Elegir carrera' }}</button><a routerLink="/preguntas" [queryParams]="{ carrera: carrera.idCarrera }">Ver preguntas →</a></div></div></article>
             }
           </div>
         } @else { <div class="empty-state"><span class="empty-icon" aria-hidden="true">⌕</span><h2>No se encontraron carreras</h2><p>Prueba con otro término de búsqueda o consulta más tarde.</p></div> }

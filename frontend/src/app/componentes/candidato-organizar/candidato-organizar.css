@@ -1,1 +1,25 @@
-.schedule-card{max-width:760px}.schedule-grid{display:grid;grid-template-columns:1fr 1fr;gap:19px;margin-bottom:22px}.schedule-grid>div:last-child{grid-column:1/-1}.schedule-button{display:inline-flex;margin-top:20px;padding:12px 24px;border:0;border-radius:999px;background:#96b9e3;color:#fff;font-weight:700;cursor:not-allowed}@media(max-width:620px){.schedule-grid{grid-template-columns:1fr}.schedule-grid>div:last-child{grid-column:auto}}
+.schedule-card{max-width:760px}.schedule-grid{display:grid;grid-template-columns:1fr 1fr;gap:19px;margin-bottom:22px}.schedule-grid>div:last-child{grid-column:1/-1}.schedule-button{display:inline-flex;margin-top:20px;padding:12px 24px;border:0;border-radius:999px;background:#2b77f2;color:#fff;font-weight:700;cursor:pointer}@media(max-width:620px){.schedule-grid{grid-template-columns:1fr}.schedule-grid>div:last-child{grid-column:auto}}
+
+.schedule-button:disabled{opacity:.6;cursor:default}
+
+.form-error{color:#b42318;font-weight:700}.form-ok{color:#106b45;font-weight:700}
+
+.sessions-card{margin-top:22px;max-width:760px}
+
+.session-list{list-style:none;margin:0;padding:0}
+
+.session-row{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;padding:12px 0;border-top:1px solid #e3e9f0}
+
+.session-row:first-child{border-top:0}
+
+.session-row span:first-child{display:grid;gap:3px}.session-row small{color:#617085}
+
+.session-row.past{opacity:.75}
+
+.session-state{padding:4px 10px;border-radius:999px;background:#e8eef6;color:#3d4f66;font-size:.82rem;font-weight:700}
+
+.session-state.upcoming{background:#e3f7ee;color:#106b45}
+
+.session-cancel{border:1px solid #e3a3a3;border-radius:10px;background:#fff;color:#b42318;padding:7px 12px;font:inherit;font-weight:700;cursor:pointer}
+
+.session-cancel:disabled{opacity:.6;cursor:default}
